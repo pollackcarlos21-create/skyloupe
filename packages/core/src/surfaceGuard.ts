@@ -1,5 +1,11 @@
-import type { Diagnostic } from "./validators";
 import type { SurfaceHitTestArgs, SurfaceHitTestResult, SurfaceRect } from "./types";
+
+interface SurfaceDiagnostic {
+  code: string;
+  message: string;
+  field: string;
+  severity: "error" | "warning";
+}
 
 export interface SafeHitTestArgs extends SurfaceHitTestArgs {
   canvasX: number;
@@ -13,10 +19,10 @@ export interface SafeHitTest {
   toViewportRect(canvasRect: SurfaceRect): SurfaceRect;
 }
 
-const warnings: Diagnostic[] = [];
+const warnings: SurfaceDiagnostic[] = [];
 let inflight: Promise<SurfaceHitTestResult | null> | null = null;
 
-export function surfaceDiagnostics(): readonly Diagnostic[] {
+export function surfaceDiagnostics(): readonly SurfaceDiagnostic[] {
   return warnings;
 }
 

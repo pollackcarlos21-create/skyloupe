@@ -26,23 +26,9 @@ export type {
   UpdateControlsConfig,
 } from "./types";
 
-export type { Diagnostic, SelectTransport, AnnotationGesture, ControlsSnapshot } from "./validators";
 export type { PreviewBinding, PreviewManager } from "./previewManager";
 export type { CanvasRef, SafeHitTest, SafeHitTestArgs } from "./surfaceGuard";
 
 export { canInjectAnnotationApi, isSecureTopLocation, nativeAnnotation } from "./runtime";
 export { createPreviewManager } from "./previewManager";
 export { createSafeHitTest, runHitTest, surfaceDiagnostics } from "./surfaceGuard";
-export {
-  bindAnnotationGuards,
-  consumeMetadata,
-  diagnoseAnnotatable,
-  isAnnotationActive,
-  metadataIgnoredForTarget,
-  registerControls,
-  registerSurface,
-  requestAnnotation,
-  resolveAnnotationGesture,
-  selectTransport,
-  toggleAnnotation,
-} from "./validators";

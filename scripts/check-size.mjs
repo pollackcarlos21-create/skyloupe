@@ -15,7 +15,7 @@ function measure(rel) {
     process.exit(1);
   }
   const raw = readFileSync(file);
-  return { raw: raw.length, gzip: gzipSync(raw).length };
+  return { file, raw: raw.length, gzip: gzipSync(raw).length };
 }
 
 function importsWithoutDom(file) {
@@ -30,19 +30,22 @@ function importsWithoutDom(file) {
 
 const core = measure("packages/core/dist/index.js");
 const react = measure("packages/react/dist/index.js");
+const validators = measure("packages/core/dist/validators.js");
 const combined = core.gzip + react.gzip;
-const coreDom = importsWithoutDom(join(root, "packages/core/dist/index.js"));
-const reactDom = importsWithoutDom(join(root, "packages/react/dist/index.js"));
-const coreOk = core.gzip < CORE_LIMIT && coreDom;
+const coreImports = importsWithoutDom(core.file);
+const reactImports = importsWithoutDom(react.file);
+const validatorImports = importsWithoutDom(validators.file);
+const coreOk = core.gzip < CORE_LIMIT && coreImports;
 const combinedOk = combined < COMBINED_LIMIT;
-const reactOk = reactDom;
+const reactOk = reactImports;
 
 const rows = [
   ["@skyloupe/core", core.raw, core.gzip, `<${CORE_LIMIT}`, coreOk ? "ok" : "FAIL"],
   ["@skyloupe/react", react.raw, react.gzip, "included in sum", reactOk ? "ok" : "FAIL"],
   ["core+react", "-", combined, `<${COMBINED_LIMIT}`, combinedOk ? "ok" : "FAIL"],
+  ["@skyloupe/core/validators", validators.raw, validators.gzip, "info", validatorImports ? "info" : "FAIL"],
 ];
-const header = ["package", "raw", "gzip", "limit", "status"];
+const header = ["entry", "raw", "gzip", "limit", "status"];
 const widths = header.map((label, index) =>
   Math.max(label.length, ...rows.map((row) => String(row[index]).length)),
 );
@@ -51,9 +54,9 @@ console.log(format(header));
 console.log(widths.map((width) => "-".repeat(width)).join("  "));
 for (const row of rows) console.log(format(row));
 
-if (!coreOk || !reactOk || !combinedOk) {
+if (!coreOk || !reactOk || !combinedOk || !validatorImports) {
   console.error(
-    "\ncheck:size failed. core gzip must be < 2048, core+react gzip sum must be < 4096, and importing either bundle must not touch window/document at load time.",
+    "\ncheck:size failed. Production @skyloupe/core must be < 2048 gzip, core+react < 4096 gzip, and every entry must import in Node without touching document at load time.",
   );
   process.exit(1);
 }
