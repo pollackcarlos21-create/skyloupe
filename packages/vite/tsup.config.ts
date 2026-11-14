@@ -8,5 +8,6 @@ export default defineConfig({
   target: "es2022",
   minify: true,
   sourcemap: false,
+  platform: "node",
   external: ["vite"],
 });

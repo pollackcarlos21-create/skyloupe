@@ -229,6 +229,10 @@ export function resolveAnnotationGesture(element: Element): AnnotationGesture | 
   return undefined;
 }
 
+export function validateMetadata(input: unknown): { metadata?: AnnotationMetadata; diagnostics: Diagnostic[] } {
+  return consumeMetadata(input);
+}
+
 export function consumeMetadata(input: unknown): { metadata?: AnnotationMetadata; diagnostics: Diagnostic[] } {
   const bad = (code: string) => ({ diagnostics: [issue(code, "metadata", "error", "ignored")] });
   if (input === undefined) return { diagnostics: [] };

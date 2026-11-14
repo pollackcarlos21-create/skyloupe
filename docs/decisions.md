@@ -11,10 +11,14 @@
 - 2026-11-14: Vitest's jsdom URL is `http://localhost:3000/` so OAI-ENV-001 sees the plan's localhost secure context.
 - 2026-11-14: `readControls` and `resetCoreState` stay off the package entry so the entry bundle can drop them.
 - 2026-11-14: The 18-rule validators ship only from `@skyloupe/core/validators` (devtools polyfill, diagnostics drawer, `skyloupe doctor`, and React `validateMetadata` in development per PLAN.md 6.1/6.2 and section 0.3); the production `@skyloupe/core` entry keeps types, preview, surface guard, and runtime helpers, and React must import validators only behind `process.env.NODE_ENV !== "production"` so esbuild and Vite drop them.
+- 2026-11-14: `.skyloupe/session.json` is exposed as the virtual module `virtual:skyloupe/session` and `globalThis.__SKYLOUPE_SESSION__`; a missing or invalid file yields null.
+- 2026-11-14: Vite source injection uses a string scan, not Babel; only intrinsic tags and `<Annotatable>` receive `data-skyloupe-source`.
+- 2026-11-14: Canvas `virtualObjects` and custom `hitTest` rects are axis-aligned canvas coordinates converted with `toViewportRect`; `onControlChange` receives the event's captured `virtualTarget.targetId`.
+- 2026-11-14: `cssVar`, `unit`, and `onApply` stay on the React control config as preview bindings and are removed before `registerControls`, because official control objects reject unknown fields.
 - 2026-11-14: `readControls` exposes registration state so CTRL-008 rollback can be tested without adding fields to `ControlsRegistrationHandle`.
 - 2026-11-14: `selectTransport` is the CTRL-007 split between preview `option.value` and recorded `option.label`.
 - 2026-11-14: `resetCoreState` and `resetSurfaceState` clear module slots between tests; they are not part of the OpenAI surface and are not exported from the package entry.
-- 2026-11-14: Section 4.2 modules outside `@skyloupe/core` still export only a `skyloupeModule` id; core's modules are the M1 implementation.
+- 2026-11-14: `@skyloupe/cli` and `@skyloupe/devtools` still export only a `skyloupeModule` id; `@skyloupe/react` and `@skyloupe/vite` are the M2 implementation.
 - 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.

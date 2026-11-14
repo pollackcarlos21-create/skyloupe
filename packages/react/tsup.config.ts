@@ -8,5 +8,8 @@ export default defineConfig({
   target: "es2022",
   minify: true,
   sourcemap: false,
-  external: ["react", "react/jsx-runtime", "@skyloupe/core"],
+  external: ["react", "react/jsx-runtime", "@skyloupe/core", "@skyloupe/core/validators"],
+  esbuildOptions(options) {
+    if (options.define) delete options.define["process.env.NODE_ENV"];
+  },
 });

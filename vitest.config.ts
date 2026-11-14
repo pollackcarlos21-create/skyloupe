@@ -7,6 +7,9 @@ const source = (pkg: string) =>
 export default defineConfig({
   resolve: {
     alias: {
+      "@skyloupe/core/validators": fileURLToPath(
+        new URL("./packages/core/src/validators.ts", import.meta.url),
+      ),
       "@skyloupe/core": source("core"),
       "@skyloupe/react": source("react"),
       "@skyloupe/vite": source("vite"),

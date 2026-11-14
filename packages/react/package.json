@@ -13,7 +13,9 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit --pretty false"
@@ -26,6 +28,8 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
-    "react": "^19.2.0"
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.3.1"
   }
 }

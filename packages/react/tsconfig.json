@@ -5,7 +5,8 @@
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM"],
     "paths": {
-      "@skyloupe/core": ["../core/src/index.ts"]
+      "@skyloupe/core": ["../core/src/index.ts"],
+      "@skyloupe/core/validators": ["../core/src/validators.ts"]
     }
   },
   "include": ["src", "test"]
