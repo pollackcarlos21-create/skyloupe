@@ -11,5 +11,5 @@ export default defineConfig({
   banner: {
     js: "#!/usr/bin/env node",
   },
-  external: ["@skyloupe/core", "@skyloupe/core/validators"],
+  external: ["@skyloupe/core", "@skyloupe/core/validators", "vite"],
 });

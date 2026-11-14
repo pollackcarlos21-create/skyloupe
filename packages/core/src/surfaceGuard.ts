@@ -21,6 +21,7 @@ export interface SafeHitTest {
 
 const warnings: SurfaceDiagnostic[] = [];
 let inflight: Promise<SurfaceHitTestResult | null> | null = null;
+let inCall = false;
 
 export function surfaceDiagnostics(): readonly SurfaceDiagnostic[] {
   return warnings;
@@ -28,6 +29,7 @@ export function surfaceDiagnostics(): readonly SurfaceDiagnostic[] {
 
 export function resetSurfaceState(): void {
   inflight = null;
+  inCall = false;
   warnings.length = 0;
 }
 
@@ -52,12 +54,20 @@ export function runHitTest(
   hitTest: (args: SurfaceHitTestArgs) => SurfaceHitTestResult | null | Promise<SurfaceHitTestResult | null>,
   args: SurfaceHitTestArgs,
 ): Promise<SurfaceHitTestResult | null> {
+  if (inCall) return Promise.resolve(hitTest(args)).then((value) => value ?? null, () => null);
   if (inflight) return Promise.resolve(null);
   const clear = () => {
     if (inflight === tracked) inflight = null;
   };
   const tracked: Promise<SurfaceHitTestResult | null> = Promise.resolve()
-    .then(() => hitTest(args))
+    .then(() => {
+      inCall = true;
+      try {
+        return hitTest(args);
+      } finally {
+        inCall = false;
+      }
+    })
     .then(
       (value) => (clear(), value),
       () => (clear(), null),

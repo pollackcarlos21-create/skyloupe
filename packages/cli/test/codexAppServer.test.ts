@@ -24,6 +24,7 @@ test("binary name is skyloupe", async () => {
     "@skyloupe/core",
     "commander",
     "picocolors",
+    "vite",
     "ws",
     "zod",
   ]);

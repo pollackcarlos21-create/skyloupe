@@ -1,0 +1,10 @@
+{
+  "comment": "Make Pro stand out",
+  "durationMs": 5200,
+  "file": "src/components/PricingCard.tsx",
+  "replacements": [
+    { "from": "const recordedRadius = 8;", "to": "const recordedRadius = 20;" },
+    { "from": "const recordedAccent = \"#2563eb\";", "to": "const recordedAccent = \"#0f766e\";" }
+  ],
+  "expect": ["recordedRadius = 20", "#0f766e"]
+}

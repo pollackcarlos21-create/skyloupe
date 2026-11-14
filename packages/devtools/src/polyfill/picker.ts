@@ -47,8 +47,9 @@ export async function pickAt(clientX: number, clientY: number): Promise<Annotati
     surface.renderSelection?.({ hoveredId: hit.id, selectedId: hit.id });
     return canvasPick(surface.element, hit);
   }
-  const element = document.elementFromPoint(clientX, clientY);
-  if (!element || element.localName === "skyloupe-devtools-host") return undefined;
+  const hit = document.elementFromPoint(clientX, clientY);
+  if (!hit || hit.localName === "skyloupe-devtools-host") return undefined;
+  const element = hit.closest("[oai-annotatable]") ?? hit;
   const gesture = resolveAnnotationGesture(element);
   const selection = document.getSelection();
   if (gesture === "text" && selection && !selection.isCollapsed && selection.rangeCount > 0) {

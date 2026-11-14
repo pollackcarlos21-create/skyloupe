@@ -27,8 +27,11 @@
 - 2026-11-14: Bridge POST origins may be `http://localhost:<any port>` or `http://127.0.0.1:<any port>`, plus exact `--allow-origin` values. `Host` must be `127.0.0.1:<bound port>`. The pairing token is 32 random bytes, hex-encoded, compared with `timingSafeEqual`.
 - 2026-11-14: `skyloupe doctor` reports a spaced control reference as `OAI-CTRL-004` (the official reference rule). The sample terminal in PLAN.md 3.3 labels that case `OAI-CTRL-005`.
 - 2026-11-14: An in-flight Codex turn is queued until `turn/completed`; the bridge does not send `turn/steer`. `--codex-ws` uses the platform WebSocket client.
-- 2026-11-14: `skyloupe init` adds `.skyloupe/` to `.gitignore` and prints the Vite/devtools snippet. It does not rewrite application source. `skyloupe demo` stays unimplemented until M5.
-- 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
+- 2026-11-14: `skyloupe init` adds `.skyloupe/` to `.gitignore` and prints the Vite/devtools snippet. It does not rewrite application source.
+- 2026-11-14: `demo/app` is Vite and React with plain CSS. `skyloupe demo` serves it on 127.0.0.1:5173; `skyloupe demo --offline` binds an ephemeral port, applies `demo/recorded-codex/turn.json`, checks the dev server module output, restores the source, and exits. It does not spawn Codex or open a network socket except that loopback server.
+- 2026-11-14: The demo plants exactly two spec issues: nested metadata on `Legacy note` inside a container (`OAI-META-001`) and `Launch badge` outside a container (`OAI-DOM-001`).
+- 2026-11-14: `runHitTest` runs a nested `runHitTest` from the hit-test callback instead of treating it as a second in-flight call, so `AnnotatableCanvas` can keep its coordinate wrapper while the devtools picker still owns the 250 ms slot.
+- 2026-11-14: `demo/`, `skills/skyloupe/SKILL.md`, and `docs/spec-compliance.md` landed in M5. npm publish, tags, and the section 11.2 posts stay with Ray.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.
 - 2026-11-14: Packages stay `private` at `0.0.0` until the v0.1 publish in M4.

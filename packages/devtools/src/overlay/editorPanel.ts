@@ -248,9 +248,9 @@ function elementOf(pick: AnnotationPick): Element | undefined {
 }
 
 function titleFor(pick: AnnotationPick, entry: RegistrationEntry | undefined): string {
-  if (entry?.heading()) return entry.heading() ?? "Selection";
   if (pick.kind === "canvas-object") return pick.objectName ?? pick.objectId;
   if (pick.kind === "text-range") return "Text selection";
+  if (entry?.heading()) return entry.heading() ?? "Selection";
   return pick.name ?? pick.element.tagName.toLowerCase();
 }
 

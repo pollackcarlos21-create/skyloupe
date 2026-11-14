@@ -1,7 +1,7 @@
 import { pathToFileURL } from "node:url";
 import { Command } from "commander";
 import { runBridge } from "./commands/bridge";
-import { demoMessage } from "./commands/demo";
+import { findRepoRoot, runOfflineDemo, startDemoServer } from "./commands/demo";
 import { runDoctor } from "./commands/doctor";
 import { initProject } from "./commands/init";
 import { runMcp } from "./commands/mcp";
@@ -50,9 +50,26 @@ export async function main(
       write(`${report.text}\n`);
       if (report.code !== 0) throw new Error("doctor found errors");
     });
-  program.command("demo").action(() => {
-    write(`${demoMessage()}\n`);
-  });
+  program
+    .command("demo")
+    .option("--offline", "replay the recorded edit and HMR loop, then exit")
+    .option("--port <port>", "loopback port")
+    .action(async (opts: { offline?: boolean; port?: string }) => {
+      const repoRoot = findRepoRoot();
+      if (opts.offline) {
+        const result = await runOfflineDemo(repoRoot);
+        write(result.log);
+        return;
+      }
+      const demo = await startDemoServer(repoRoot, opts.port ? Number(opts.port) : 5173);
+      write(`✔ SkyLoupe demo on ${demo.url}\n`);
+      write("Press Ctrl+C to stop.\n");
+      await new Promise<void>((resolve) => {
+        process.once("SIGINT", () => resolve());
+        process.once("SIGTERM", () => resolve());
+      });
+      await demo.close();
+    });
   try {
     await program.parseAsync([...argv], { from: "user" });
     return 0;
