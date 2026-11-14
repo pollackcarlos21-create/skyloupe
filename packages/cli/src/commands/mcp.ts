@@ -1,2 +1,5 @@
-/** Placeholder module. Behavior lands in a later milestone. */
-export const skyloupeModule = "cli/commands/mcp";
+import { startMcp } from "../mcp/server";
+
+export function runMcp(repoRoot: string): Promise<void> {
+  return startMcp(repoRoot);
+}

@@ -1,2 +1,3 @@
-/** Placeholder module. Behavior lands in a later milestone. */
-export const skyloupeModule = "cli/commands/demo";
+export function demoMessage(): string {
+  return "skyloupe demo arrives in a later milestone. Use skyloupe bridge, mcp, and doctor.";
+}

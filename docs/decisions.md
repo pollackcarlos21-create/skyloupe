@@ -24,6 +24,10 @@
 - 2026-11-14: Clipboard mode copies the section 7.2 Markdown. A screenshot is a PNG data URL on the bundle, raced against 400ms, and a capture failure is omitted so the copy still completes. Bridge connection stays Clipboard Mode until M4.
 - 2026-11-14: With a native `document.oai.annotation`, `inspector: false` is native-passthrough and the default is native-companion. An insecure or framed document is left untouched.
 - 2026-11-14: The simulator end-to-end test launches system Chrome through Playwright when it is installed, otherwise Playwright's Chromium.
+- 2026-11-14: Bridge POST origins may be `http://localhost:<any port>` or `http://127.0.0.1:<any port>`, plus exact `--allow-origin` values. `Host` must be `127.0.0.1:<bound port>`. The pairing token is 32 random bytes, hex-encoded, compared with `timingSafeEqual`.
+- 2026-11-14: `skyloupe doctor` reports a spaced control reference as `OAI-CTRL-004` (the official reference rule). The sample terminal in PLAN.md 3.3 labels that case `OAI-CTRL-005`.
+- 2026-11-14: An in-flight Codex turn is queued until `turn/completed`; the bridge does not send `turn/steer`. `--codex-ws` uses the platform WebSocket client.
+- 2026-11-14: `skyloupe init` adds `.skyloupe/` to `.gitignore` and prints the Vite/devtools snippet. It does not rewrite application source. `skyloupe demo` stays unimplemented until M5.
 - 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.

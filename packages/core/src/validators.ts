@@ -1,4 +1,6 @@
 import { CALLBACK_NAME, FORBIDDEN_TEXT, HEX_COLOR, METADATA_KEY, REFERENCE_NAME, utf8Length } from "./constants";
+
+export { CALLBACK_NAME, FORBIDDEN_TEXT, REFERENCE_NAME };
 import { canInjectAnnotationApi } from "./runtime";
 import type {
   AnnotationAcceptance,

@@ -27,6 +27,8 @@ export interface EditorSession {
   pick?: AnnotationPick;
   changes: ControlChangeRecord[];
   comment: string;
+  connected?: boolean;
+  resetPreview?: () => void;
 }
 
 export function renderEditor(panel: HTMLElement, session: EditorSession, onChange: () => void): void {
@@ -54,6 +56,12 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
 
   const preview = createPreviewManager();
   let last: { detail: AnnotationControlChangeDetail; binding: PreviewBinding } | undefined;
+  session.resetPreview = () => {
+    if (!last || !target) return;
+    const detail = { ...last.detail, action: "reset" as const };
+    preview.apply(detail, target, last.binding);
+    target.dispatchEvent(new CustomEvent("oaiannotationcontrolchange", { detail, bubbles: true }));
+  };
   const controls = controlsFor(entry);
   for (const control of controls) {
     panel.append(field(control, target, (value) => {
@@ -114,6 +122,13 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
   copy.type = "button";
   copy.dataset.skyloupeRole = "copy";
   copy.textContent = "Copy prompt";
+  if (session.connected) {
+    const send = document.createElement("button");
+    send.type = "button";
+    send.dataset.skyloupeRole = "send";
+    send.textContent = "Send to Codex";
+    row.append(send);
+  }
   const close = document.createElement("button");
   close.type = "button";
   close.dataset.skyloupeRole = "close";

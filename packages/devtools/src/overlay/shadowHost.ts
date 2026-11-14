@@ -1,4 +1,4 @@
-import { bridgeLamp } from "../client/bridgeClient";
+import { bridgeLamp, listenBridge, probeBridge, readBrowserSession, sendAnnotation } from "../client/bridgeClient";
 import { buildAnnotationBundle, formatAnnotationMarkdown, withUnchangedChoices } from "../capture/bundleBuilder";
 import { renderEditor, type EditorSession } from "./editorPanel";
 import { renderDrawer, scanDiagnostics } from "./diagnosticsDrawer";
@@ -19,6 +19,7 @@ const CSS = `
 .badge { background: #166534; color: white; }
 .badge[data-hot="true"] { background: #b91c1c; }
 .bridge { background: transparent; color: #a8a29e; }
+.bridge[data-connected="true"] { color: #86efac; }
 .editor, .drawer { position: fixed; background: #fffdf8; border: 1px solid #e7e5e4; border-radius: 14px; box-shadow: 0 16px 40px rgba(28,25,23,.18); }
 .editor { right: 16px; bottom: 72px; width: 280px; max-height: 70vh; overflow: auto; padding: 12px; display: grid; gap: 8px; }
 .editor h2 { margin: 0; font-size: 15px; }
@@ -67,6 +68,7 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
   bridge.className = "bridge";
   bridge.dataset.skyloupeRole = "bridge";
   bridge.textContent = bridgeLamp(mode).label;
+  bridge.dataset.connected = "false";
   if (mode === "polyfill-standalone") capsule.append(annotate);
   capsule.append(badge, bridge);
   const editor = document.createElement("section");
@@ -113,6 +115,7 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
   editor.addEventListener("click", (event) => {
     const button = event.target instanceof Element ? event.target.closest("button") : null;
     if (button?.dataset.skyloupeRole === "copy") void copyPrompt(host, session);
+    if (button?.dataset.skyloupeRole === "send") void sendToCodex(session, bridge);
   });
   document.addEventListener("keydown", (event) => {
     if (event.code === "Space") space = true;
@@ -142,6 +145,34 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
   const observer = new MutationObserver(() => paint(false));
   observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["oai-annotatable", "oai-annotation-metadata"] });
   paint(true);
+  const browserSession = mode === "polyfill-standalone" ? readBrowserSession() : null;
+  if (browserSession) {
+    void probeBridge(browserSession).then((connected) => {
+      session.connected = connected;
+      bridge.textContent = bridgeLamp(mode, connected).label;
+      bridge.dataset.connected = connected ? "true" : "false";
+      if (connected) {
+        paint(true);
+        void listenBridge(browserSession, (event) => {
+          if (event.type === "reset" || (event.type === "turn" && event.status === "completed")) {
+            session.resetPreview?.();
+            bridge.textContent = "Codex Connected";
+          } else if (event.message) bridge.textContent = event.message;
+        });
+      }
+    });
+  }
+}
+
+async function sendToCodex(session: EditorSession, bridge: HTMLElement): Promise<void> {
+  const browserSession = readBrowserSession();
+  const pick = session.pick;
+  if (!browserSession || !pick) return;
+  const element = pick.kind === "text-range" ? undefined : pick.element;
+  const changes = withUnchangedChoices(session.changes, element ? registrationFor(element) : undefined);
+  const bundle = await buildAnnotationBundle({ pick, changes, comment: session.comment });
+  bridge.textContent = "Sending";
+  await sendAnnotation(browserSession, bundle);
 }
 
 async function copyPrompt(host: HTMLElement, session: EditorSession): Promise<void> {
