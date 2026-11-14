@@ -1,0 +1,31 @@
+{
+  "name": "@skyloupe/react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "description": "React adapter for SkyLoupe. React is a peer dependency; no other runtime third-party dependencies.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@skyloupe/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "react": "^19.2.0"
+  }
+}

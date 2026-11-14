@@ -1,0 +1,24 @@
+{
+  "name": "@skyloupe/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "description": "SkyLoupe command line. Binary name: skyloupe.",
+  "bin": {
+    "skyloupe": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup && node --input-type=module -e \"import { chmodSync } from 'node:fs'; chmodSync('dist/index.js', 0o755)\"",
+    "typecheck": "tsc --noEmit --pretty false"
+  }
+}
