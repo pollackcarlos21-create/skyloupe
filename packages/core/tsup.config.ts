@@ -7,5 +7,10 @@ export default defineConfig({
   clean: true,
   target: "es2022",
   minify: true,
+  treeshake: true,
   sourcemap: false,
+  esbuildOptions(options) {
+    options.legalComments = "none";
+    options.treeShaking = true;
+  },
 });

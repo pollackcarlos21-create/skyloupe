@@ -9,7 +9,8 @@
 - 2026-11-14: `Diagnostic.severity` is `"error"` or `"warning"`; the plan names the field but not the union.
 - 2026-11-14: `createSafeHitTest` accepts an `HTMLCanvasElement` or a `{ current }` ref and returns `{ hitTest, toViewportRect }` so `toViewportRect(canvasRect)` can close over that canvas.
 - 2026-11-14: Vitest's jsdom URL is `http://localhost:3000/` so OAI-ENV-001 sees the plan's localhost secure context.
-- 2026-11-14: The minified `@skyloupe/core` entry gzips to about 3.7 KB with all 18 rules, preview rollback, and the canvas guard included. That is under the section 8 combined 4 KB cap and above the M1 2 KB line; `check-size` still uses `< 2048`.
+- 2026-11-14: `readControls` and `resetCoreState` stay off the package entry so the entry bundle can drop them.
+- 2026-11-14: Core tsup targets ES2022 with minify, treeshake, and no legal comments. The full entry still gzips to 3601 B, above the 2048 B M1 line; `check-size` is unchanged.
 - 2026-11-14: `readControls` exposes registration state so CTRL-008 rollback can be tested without adding fields to `ControlsRegistrationHandle`.
 - 2026-11-14: `selectTransport` is the CTRL-007 split between preview `option.value` and recorded `option.label`.
 - 2026-11-14: `resetCoreState` and `resetSurfaceState` clear module slots between tests; they are not part of the OpenAI surface and are not exported from the package entry.

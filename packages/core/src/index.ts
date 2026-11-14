@@ -39,7 +39,6 @@ export {
   diagnoseAnnotatable,
   isAnnotationActive,
   metadataIgnoredForTarget,
-  readControls,
   registerControls,
   registerSurface,
   requestAnnotation,

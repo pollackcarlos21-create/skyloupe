@@ -1,4 +1,4 @@
-import type { AnnotationControlAction, AnnotationControlChangeDetail } from "./types";
+import type { AnnotationControlChangeDetail } from "./types";
 
 export interface PreviewBinding {
   callback: string;
@@ -12,53 +12,26 @@ export interface PreviewManager {
   dispose(element: Element): void;
 }
 
-function styled(element: Element): CSSStyleDeclaration {
-  return (element as HTMLElement).style;
-}
-
-function restoreStyle(element: Element, baseline: string | null): void {
-  if (baseline === null) element.removeAttribute("style");
-  else element.setAttribute("style", baseline);
-}
-
 export function createPreviewManager(): PreviewManager {
-  const baselines = new WeakMap<Element, string | null>();
-
-  const remember = (element: Element) => {
-    if (!baselines.has(element)) baselines.set(element, element.getAttribute("style"));
-  };
-
+  const base = new WeakMap<Element, string | null>();
   const restore = (element: Element, forget: boolean) => {
-    if (!baselines.has(element)) return;
-    restoreStyle(element, baselines.get(element) ?? null);
-    if (forget) baselines.delete(element);
+    if (!base.has(element)) return;
+    const value = base.get(element) ?? null;
+    if (value === null) element.removeAttribute("style");
+    else element.setAttribute("style", value);
+    if (forget) base.delete(element);
   };
-
-  const write = (detail: AnnotationControlChangeDetail, element: Element, binding: PreviewBinding) => {
-    if (binding.callback !== detail.callback) return;
-    remember(element);
-    if (binding.cssVar) {
-      const unit = binding.unit ?? "";
-      styled(element).setProperty(binding.cssVar, `${detail.value}${unit}`);
-    }
-    binding.onApply?.(detail.value, element);
-  };
-
   return {
     apply(detail, element, binding) {
-      const action: AnnotationControlAction = detail.action;
-      if (action === "reset") {
-        restore(element, true);
-        return;
+      if (binding.callback !== detail.callback) return;
+      if (detail.action === "reset") return restore(element, true);
+      if (detail.action === "preview-original") return restore(element, false);
+      if (!base.has(element)) base.set(element, element.getAttribute("style"));
+      if (binding.cssVar) {
+        (element as HTMLElement).style.setProperty(binding.cssVar, `${detail.value}${binding.unit ?? ""}`);
       }
-      if (action === "preview-original") {
-        restore(element, false);
-        return;
-      }
-      write(detail, element, binding);
+      binding.onApply?.(detail.value, element);
     },
-    dispose(element) {
-      restore(element, true);
-    },
+    dispose: (element) => restore(element, true),
   };
 }
