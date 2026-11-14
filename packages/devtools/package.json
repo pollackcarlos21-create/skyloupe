@@ -13,9 +13,18 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@skyloupe/core": "workspace:*"
+  },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit --pretty false"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "^1.65.1"
   }
 }

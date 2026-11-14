@@ -8,4 +8,5 @@ export default defineConfig({
   target: "es2022",
   minify: true,
   sourcemap: false,
+  external: ["@skyloupe/core", "@skyloupe/core/validators"],
 });

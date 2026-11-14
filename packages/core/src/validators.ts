@@ -50,6 +50,10 @@ let pending = false;
 let space = false;
 let unbind: (() => void) | undefined;
 
+function overlayEvent(event: Event): boolean {
+  return event.composedPath().some((node) => node instanceof Element && node.localName === "skyloupe-devtools-host");
+}
+
 function fail(code: string): never {
   throw new Error(code);
 }
@@ -309,10 +313,9 @@ export function bindAnnotationGuards(): () => void {
     if (key.key === " " || key.code === "Space") space = key.type === "keydown";
   };
   const onPointer = (event: Event) => {
-    if (active && !space) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    if (overlayEvent(event) || !(active && !space)) return;
+    event.preventDefault();
+    event.stopPropagation();
   };
   for (const type of ["keydown", "keyup"]) page.addEventListener(type, onKey, true);
   for (const type of ["click", "submit"]) page.addEventListener(type, onPointer, true);

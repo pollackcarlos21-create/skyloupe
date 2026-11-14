@@ -18,7 +18,12 @@
 - 2026-11-14: `readControls` exposes registration state so CTRL-008 rollback can be tested without adding fields to `ControlsRegistrationHandle`.
 - 2026-11-14: `selectTransport` is the CTRL-007 split between preview `option.value` and recorded `option.label`.
 - 2026-11-14: `resetCoreState` and `resetSurfaceState` clear module slots between tests; they are not part of the OpenAI surface and are not exported from the package entry.
-- 2026-11-14: `@skyloupe/cli` and `@skyloupe/devtools` still export only a `skyloupeModule` id; `@skyloupe/react` and `@skyloupe/vite` are the M2 implementation.
+- 2026-11-14: `@skyloupe/cli` still exports only a `skyloupeModule` id; `@skyloupe/devtools` is the M3 simulator.
+- 2026-11-14: Annotation click guards ignore events whose path includes `skyloupe-devtools-host` so the overlay can be operated while annotation mode is on.
+- 2026-11-14: The editor docks above the capsule and previews a control as a CSS custom property when its `reference` starts with `--`; built-in adjusters write `font-size`, `color`, `background-color`, and `padding`. Range previews append `px`.
+- 2026-11-14: Clipboard mode copies the section 7.2 Markdown. A screenshot is a PNG data URL on the bundle, raced against 400ms, and a capture failure is omitted so the copy still completes. Bridge connection stays Clipboard Mode until M4.
+- 2026-11-14: With a native `document.oai.annotation`, `inspector: false` is native-passthrough and the default is native-companion. An insecure or framed document is left untouched.
+- 2026-11-14: The simulator end-to-end test launches system Chrome through Playwright when it is installed, otherwise Playwright's Chromium.
 - 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.

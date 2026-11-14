@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SkyLoupe fixture</title>
+    <style>
+      body { margin: 0; min-height: 100vh; background: #f4efe6; font-family: ui-sans-serif, system-ui, sans-serif; color: #1c1917; }
+      main { display: flex; gap: 24px; align-items: flex-start; padding: 48px; }
+      article { width: 240px; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(28,25,23,.08); }
+      canvas { background: white; border-radius: 16px; }
+      .notes { display: grid; gap: 8px; }
+    </style>
+  </head>
+  <body>
+    <main oai-annotation-container>
+      <article
+        id="card"
+        class="pricing-card"
+        oai-annotatable="Pricing Card (Pro)"
+        oai-annotation-metadata='{"planId":"Pro","monthlyPrice":29}'
+        data-skyloupe-source="src/components/PricingCard.tsx:31:4"
+      >
+        <h2>Pro</h2>
+        <p>$29/mo</p>
+      </article>
+      <canvas
+        id="chart"
+        width="200"
+        height="100"
+        data-skyloupe-source="src/components/RevenueChart.tsx:12:4"
+      ></canvas>
+      <p id="broken" oai-annotatable="Broken card" oai-annotation-metadata='{"plan":{"id":"Pro"}}'>Nested metadata</p>
+    </main>
+    <p id="orphan" oai-annotatable="Orphan note">Outside the container</p>
+    <script type="module" src="/fixture.js"></script>
+  </body>
+</html>

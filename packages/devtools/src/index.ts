@@ -1,3 +1,4 @@
 export const version = "0.0.0" as const;
 
-export { skyloupeModule as installPolyfill } from "./polyfill/installPolyfill";
+export { installPolyfill, mountDevtools, resetDevtools } from "./polyfill/installPolyfill";
+export type { DevtoolsMode } from "./polyfill/installPolyfill";
