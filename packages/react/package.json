@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "sideEffects": false,
-  "description": "React adapter for SkyLoupe. React is a peer dependency; no other runtime third-party dependencies.",
+  "description": "React bindings for SkyLoupe. React is a peer dependency.",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
     "@skyloupe/core": "workspace:*"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",

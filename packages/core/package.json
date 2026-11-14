@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "sideEffects": false,
-  "description": "Framework-agnostic SkyLoupe core. No runtime third-party dependencies.",
+  "description": "Zero-dependency SkyLoupe core.",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

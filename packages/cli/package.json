@@ -1,24 +1,30 @@
 {
-  "name": "@skyloupe/cli",
+  "name": "skyloupe",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "sideEffects": false,
   "description": "SkyLoupe command line. Binary name: skyloupe.",
   "bin": {
-    "skyloupe": "./dist/index.js"
+    "skyloupe": "./dist/cli.js"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
     }
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsup && node --input-type=module -e \"import { chmodSync } from 'node:fs'; chmodSync('dist/index.js', 0o755)\"",
+    "build": "tsup && node --input-type=module -e \"import { chmodSync } from 'node:fs'; chmodSync('dist/cli.js', 0o755)\"",
     "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1",
+    "ws": "^8.18.0",
+    "zod": "^4.1.0"
   }
 }

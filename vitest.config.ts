@@ -7,15 +7,14 @@ const source = (pkg: string) =>
 export default defineConfig({
   resolve: {
     alias: {
-      "@skyloupe/schema": source("schema"),
       "@skyloupe/core": source("core"),
-      "@skyloupe/dom": source("dom"),
       "@skyloupe/react": source("react"),
-      "@skyloupe/cli": source("cli"),
+      "@skyloupe/vite": source("vite"),
+      "@skyloupe/devtools": source("devtools"),
     },
   },
   test: {
-    environment: "node",
-    include: ["packages/*/src/**/*.test.ts"],
+    environment: "jsdom",
+    include: ["packages/*/test/**/*.test.ts", "packages/*/test/**/*.test.tsx"],
   },
 });

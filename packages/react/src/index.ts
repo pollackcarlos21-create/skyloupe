@@ -1,10 +1,3 @@
-import { version as coreVersion } from "@skyloupe/core";
-import type { ReactNode } from "react";
+export { version as coreVersion } from "@skyloupe/core";
 
 export const version = "0.0.0" as const;
-
-export { coreVersion };
-
-export interface SkyLoupeRootProps {
-  children?: ReactNode;
-}

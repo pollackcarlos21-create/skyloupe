@@ -1,17 +1,17 @@
 # Decisions
 
-Unspecified details use the simplest reversible option. One line each.
-
-- 2026-11-14: Uploaded plan `/workspace/uploads/PLAN_7c35.md` was not on disk, so section 4.1, 4.2, and 8 could not be copied verbatim.
-- 2026-11-14: Five packages are `@skyloupe/schema`, `@skyloupe/core`, `@skyloupe/dom`, `@skyloupe/react`, and `@skyloupe/cli` (bin `skyloupe`), in `packages/<short-name>`.
-- 2026-11-14: Tooling is pnpm 10.33.4, TypeScript 5.9, tsup 8, vitest 3, ESLint 9 flat config, Node `>=20` (CI runs Node 22).
-- 2026-11-14: Packages are ESM-only, target ES2022, tsup emits minified `dist/index.js` plus `.d.ts`, and public `exports` point at `dist`.
-- 2026-11-14: `pnpm typecheck` and vitest resolve workspace packages to TypeScript source (`paths` / vitest alias) so they do not need a prior build.
-- 2026-11-14: Lint is ESLint recommended plus typescript-eslint recommended; no extra rule set and no formatter in M0.
-- 2026-11-14: Gzip budgets in `scripts/size-budget.json` are provisional: schema, core, dom, and react 2048 bytes; cli 4096 bytes; measured on `dist/index.js`.
-- 2026-11-14: M0 stubs export a version (and the CLI prints `skyloupe` / `--version`); no product behavior from later milestones.
-- 2026-11-14: Packages stay `private` at `0.0.0` with no license file until a publish milestone.
-- 2026-11-14: `@skyloupe/react` depends on `@skyloupe/core` via `workspace:*`; `react` `>=18` is only a peerDependency, with `react` and `@types/react` as devDependencies.
-- 2026-11-14: No runtime third-party dependencies in any M0 package; schema does not take a validator library yet.
-- 2026-11-14: `pnpm check:size` does not build; CI and local use run `pnpm build` before it.
-- 2026-11-14: pnpm 10 blocks dependency lifecycle scripts, so `pnpm.onlyBuiltDependencies` allows `esbuild` (required by tsup).
+- 2026-11-14: Root package is named `skyloupe-workspace` so it does not collide with the `skyloupe` CLI package.
+- 2026-11-14: `pnpm lint` uses ESLint 9 flat config with typescript-eslint recommended; PLAN.md does not name a linter.
+- 2026-11-14: TypeScript target is ES2022 with `moduleResolution: Bundler`; PLAN.md specifies TypeScript 5 strict and ESM but not the target.
+- 2026-11-14: tsup emits minified ESM plus `.d.ts` so `check-size` measures a production-like gzip.
+- 2026-11-14: Combined gzip is the sum of each package's gzip size, matching M2's "合计".
+- 2026-11-14: `check-size` rejects `window` or `document` in the core and react bundles except `typeof window` and `typeof document`, using a text scan.
+- 2026-11-14: Section 4.2 modules other than each package entry export only a `skyloupeModule` id until the milestone that implements them.
+- 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
+- 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
+- 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.
+- 2026-11-14: Packages stay `private` at `0.0.0` until the v0.1 publish in M4.
+- 2026-11-14: CI uses Node 22 and pnpm 10.33.4; PLAN.md requires Node 20+ and pnpm without a pin.
+- 2026-11-14: pnpm 10 runs install scripts only for `esbuild` via `pnpm.onlyBuiltDependencies`.
+- 2026-11-14: `@skyloupe/devtools` does not declare a React peer in M0; section 4.1 specifies custom elements and does not list one.
+- 2026-11-14: `@skyloupe/vite` devDependency is the current Vite 8; the peer range stays `>=5.0.0` as section 4.1 specifies.
