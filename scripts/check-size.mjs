@@ -1,6 +1,7 @@
+import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,27 +15,27 @@ function measure(rel) {
     process.exit(1);
   }
   const raw = readFileSync(file);
-  return { raw: raw.length, gzip: gzipSync(raw).length, source: raw.toString("utf8") };
+  return { raw: raw.length, gzip: gzipSync(raw).length };
 }
 
-function hasDomSideEffect(source) {
-  const stripped = source
-    .replace(/`(?:\\.|[^`\\])*`/g, "''")
-    .replace(/'(?:\\.|[^'\\])*'/g, "''")
-    .replace(/"(?:\\.|[^"\\])*"/g, '""')
-    .replace(/\btypeof\s+window\b/g, "")
-    .replace(/\btypeof\s+document\b/g, "");
-  return /\b(?:window|document)\b/.test(stripped);
+function importsWithoutDom(file) {
+  const href = pathToFileURL(file).href;
+  const result = spawnSync(
+    process.execPath,
+    ["--input-type=module", "-e", `await import(${JSON.stringify(href)})`],
+    { encoding: "utf8" },
+  );
+  return result.status === 0;
 }
 
 const core = measure("packages/core/dist/index.js");
 const react = measure("packages/react/dist/index.js");
 const combined = core.gzip + react.gzip;
-const coreDom = hasDomSideEffect(core.source);
-const reactDom = hasDomSideEffect(react.source);
-const coreOk = core.gzip < CORE_LIMIT && !coreDom;
+const coreDom = importsWithoutDom(join(root, "packages/core/dist/index.js"));
+const reactDom = importsWithoutDom(join(root, "packages/react/dist/index.js"));
+const coreOk = core.gzip < CORE_LIMIT && coreDom;
 const combinedOk = combined < COMBINED_LIMIT;
-const reactOk = !reactDom;
+const reactOk = reactDom;
 
 const rows = [
   ["@skyloupe/core", core.raw, core.gzip, `<${CORE_LIMIT}`, coreOk ? "ok" : "FAIL"],
@@ -52,7 +53,7 @@ for (const row of rows) console.log(format(row));
 
 if (!coreOk || !reactOk || !combinedOk) {
   console.error(
-    "\ncheck:size failed. core gzip must be < 2048, core+react gzip sum must be < 4096, and neither bundle may touch window/document except via typeof.",
+    "\ncheck:size failed. core gzip must be < 2048, core+react gzip sum must be < 4096, and importing either bundle must not touch window/document at load time.",
   );
   process.exit(1);
 }

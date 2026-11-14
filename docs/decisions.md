@@ -5,8 +5,15 @@
 - 2026-11-14: TypeScript target is ES2022 with `moduleResolution: Bundler`; PLAN.md specifies TypeScript 5 strict and ESM but not the target.
 - 2026-11-14: tsup emits minified ESM plus `.d.ts` so `check-size` measures a production-like gzip.
 - 2026-11-14: Combined gzip is the sum of each package's gzip size, matching M2's "合计".
-- 2026-11-14: `check-size` rejects `window` or `document` in the core and react bundles except `typeof window` and `typeof document`, using a text scan.
-- 2026-11-14: Section 4.2 modules other than each package entry export only a `skyloupeModule` id until the milestone that implements them.
+- 2026-11-14: `check-size` proves section 8's no-top-level-DOM rule by importing the built core and react bundles in Node, where `document` is absent.
+- 2026-11-14: `Diagnostic.severity` is `"error"` or `"warning"`; the plan names the field but not the union.
+- 2026-11-14: `createSafeHitTest` accepts an `HTMLCanvasElement` or a `{ current }` ref and returns `{ hitTest, toViewportRect }` so `toViewportRect(canvasRect)` can close over that canvas.
+- 2026-11-14: Vitest's jsdom URL is `http://localhost:3000/` so OAI-ENV-001 sees the plan's localhost secure context.
+- 2026-11-14: The minified `@skyloupe/core` entry gzips to about 3.7 KB with all 18 rules, preview rollback, and the canvas guard included. That is under the section 8 combined 4 KB cap and above the M1 2 KB line; `check-size` still uses `< 2048`.
+- 2026-11-14: `readControls` exposes registration state so CTRL-008 rollback can be tested without adding fields to `ControlsRegistrationHandle`.
+- 2026-11-14: `selectTransport` is the CTRL-007 split between preview `option.value` and recorded `option.label`.
+- 2026-11-14: `resetCoreState` and `resetSurfaceState` clear module slots between tests; they are not part of the OpenAI surface and are not exported from the package entry.
+- 2026-11-14: Section 4.2 modules outside `@skyloupe/core` still export only a `skyloupeModule` id; core's modules are the M1 implementation.
 - 2026-11-14: `demo/`, `skills/`, and `docs/spec-compliance.md` wait for M5; M0 creates the workspace and the five packages.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.
