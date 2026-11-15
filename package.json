@@ -1,0 +1,31 @@
+{
+  "name": "skyloupe-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "SkyLoupe monorepo.",
+  "packageManager": "pnpm@10.33.4",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" build",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./demo/*\" typecheck",
+    "test": "vitest run",
+    "check:size": "node scripts/check-size.mjs"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.19.1",
+    "eslint": "^9.39.1",
+    "jsdom": "^27.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^3.2.4"
+  }
+}

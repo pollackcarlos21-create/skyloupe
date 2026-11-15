@@ -1,0 +1,42 @@
+# Decisions
+
+- 2026-11-14: Root package is named `skyloupe-workspace` so it does not collide with the `skyloupe` CLI package.
+- 2026-11-14: `pnpm lint` uses ESLint 9 flat config with typescript-eslint recommended; PLAN.md does not name a linter.
+- 2026-11-14: TypeScript target is ES2022 with `moduleResolution: Bundler`; PLAN.md specifies TypeScript 5 strict and ESM but not the target.
+- 2026-11-14: tsup emits minified ESM plus `.d.ts` so `check-size` measures a production-like gzip.
+- 2026-11-14: Combined gzip is the sum of each package's gzip size, matching M2's "合计".
+- 2026-11-14: `check-size` proves section 8's no-top-level-DOM rule by importing the built core and react bundles in Node, where `document` is absent.
+- 2026-11-14: `Diagnostic.severity` is `"error"` or `"warning"`; the plan names the field but not the union.
+- 2026-11-14: `createSafeHitTest` accepts an `HTMLCanvasElement` or a `{ current }` ref and returns `{ hitTest, toViewportRect }` so `toViewportRect(canvasRect)` can close over that canvas.
+- 2026-11-14: Vitest's jsdom URL is `http://localhost:3000/` so OAI-ENV-001 sees the plan's localhost secure context.
+- 2026-11-14: `readControls` and `resetCoreState` stay off the package entry so the entry bundle can drop them.
+- 2026-11-14: The 18-rule validators ship only from `@skyloupe/core/validators` (devtools polyfill, diagnostics drawer, `skyloupe doctor`, and React `validateMetadata` in development per PLAN.md 6.1/6.2 and section 0.3); the production `@skyloupe/core` entry keeps types, preview, surface guard, and runtime helpers, and React must import validators only behind `process.env.NODE_ENV !== "production"` so esbuild and Vite drop them.
+- 2026-11-14: `.skyloupe/session.json` is exposed as the virtual module `virtual:skyloupe/session` and `globalThis.__SKYLOUPE_SESSION__`; a missing or invalid file yields null.
+- 2026-11-14: Vite source injection uses a string scan, not Babel; only intrinsic tags and `<Annotatable>` receive `data-skyloupe-source`.
+- 2026-11-14: Canvas `virtualObjects` and custom `hitTest` rects are axis-aligned canvas coordinates converted with `toViewportRect`; `onControlChange` receives the event's captured `virtualTarget.targetId`.
+- 2026-11-14: `cssVar`, `unit`, and `onApply` stay on the React control config as preview bindings and are removed before `registerControls`, because official control objects reject unknown fields.
+- 2026-11-14: `readControls` exposes registration state so CTRL-008 rollback can be tested without adding fields to `ControlsRegistrationHandle`.
+- 2026-11-14: `selectTransport` is the CTRL-007 split between preview `option.value` and recorded `option.label`.
+- 2026-11-14: `resetCoreState` and `resetSurfaceState` clear module slots between tests; they are not part of the OpenAI surface and are not exported from the package entry.
+- 2026-11-14: `@skyloupe/cli` still exports only a `skyloupeModule` id; `@skyloupe/devtools` is the M3 simulator.
+- 2026-11-14: Annotation click guards ignore events whose path includes `skyloupe-devtools-host` so the overlay can be operated while annotation mode is on.
+- 2026-11-14: The editor docks above the capsule and previews a control as a CSS custom property when its `reference` starts with `--`; built-in adjusters write `font-size`, `color`, `background-color`, and `padding`. Range previews append `px`.
+- 2026-11-14: Clipboard mode copies the section 7.2 Markdown. A screenshot is a PNG data URL on the bundle, raced against 400ms, and a capture failure is omitted so the copy still completes. Bridge connection stays Clipboard Mode until M4.
+- 2026-11-14: With a native `document.oai.annotation`, `inspector: false` is native-passthrough and the default is native-companion. An insecure or framed document is left untouched.
+- 2026-11-14: The simulator end-to-end test launches system Chrome through Playwright when it is installed, otherwise Playwright's Chromium.
+- 2026-11-14: Bridge POST origins may be `http://localhost:<any port>` or `http://127.0.0.1:<any port>`, plus exact `--allow-origin` values. `Host` must be `127.0.0.1:<bound port>`. The pairing token is 32 random bytes, hex-encoded, compared with `timingSafeEqual`.
+- 2026-11-14: `skyloupe doctor` reports a spaced control reference as `OAI-CTRL-004` (the official reference rule). The sample terminal in PLAN.md 3.3 labels that case `OAI-CTRL-005`.
+- 2026-11-14: An in-flight Codex turn is queued until `turn/completed`; the bridge does not send `turn/steer`. `--codex-ws` uses the platform WebSocket client.
+- 2026-11-14: `skyloupe init` adds `.skyloupe/` to `.gitignore` and prints the Vite/devtools snippet. It does not rewrite application source.
+- 2026-11-14: `demo/app` is Vite and React with plain CSS. `skyloupe demo` serves it on 127.0.0.1:5173; `skyloupe demo --offline` binds an ephemeral port, applies `demo/recorded-codex/turn.json`, checks the dev server module output, restores the source, and exits. It does not spawn Codex or open a network socket except that loopback server.
+- 2026-11-14: The demo plants exactly two spec issues: nested metadata on `Legacy note` inside a container (`OAI-META-001`) and `Launch badge` outside a container (`OAI-DOM-001`).
+- 2026-11-14: `runHitTest` runs a nested `runHitTest` from the hit-test callback instead of treating it as a second in-flight call, so `AnnotatableCanvas` can keep its coordinate wrapper while the devtools picker still owns the 250 ms slot.
+- 2026-11-14: `demo/`, `skills/skyloupe/SKILL.md`, and `docs/spec-compliance.md` landed in M5. npm publish, tags, and the section 11.2 posts stay with Ray.
+- 2026-11-15: The demo is white, sans-serif, and shadow-separated. A small EN / 中文 switch stores `skyloupe-demo-lang` in localStorage and defaults to English. The devtools chrome uses the same surfaces; its control labels stay English so the existing tests keep their names.
+- 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
+- 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.
+- 2026-11-14: Packages stay `private` at `0.0.0` until the v0.1 publish in M4.
+- 2026-11-14: CI uses Node 22 and pnpm 10.33.4; PLAN.md requires Node 20+ and pnpm without a pin.
+- 2026-11-14: pnpm 10 runs install scripts only for `esbuild` via `pnpm.onlyBuiltDependencies`.
+- 2026-11-14: `@skyloupe/devtools` does not declare a React peer in M0; section 4.1 specifies custom elements and does not list one.
+- 2026-11-14: `@skyloupe/vite` devDependency is the current Vite 8; the peer range stays `>=5.0.0` as section 4.1 specifies.

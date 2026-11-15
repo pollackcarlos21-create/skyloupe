@@ -1,0 +1,30 @@
+{
+  "name": "@skyloupe/devtools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "description": "Dev-only SkyLoupe polyfill and overlay. No Tailwind or CSS-in-JS runtime.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@skyloupe/core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "^1.65.1"
+  }
+}
