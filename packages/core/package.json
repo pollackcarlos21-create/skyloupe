@@ -1,0 +1,35 @@
+{
+  "name": "@skyloupe/core",
+  "version": "0.2.0",
+  "type": "module",
+  "sideEffects": false,
+  "description": "Zero-dependency SkyLoupe core.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./validators": {
+      "types": "./dist/validators.d.ts",
+      "import": "./dist/validators.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

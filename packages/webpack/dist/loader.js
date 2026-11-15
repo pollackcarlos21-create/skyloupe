@@ -1,0 +1,1 @@
+import{a as o}from"./chunk-TWW7TA6B.js";function s(t){let r=this.getOptions?.()??{},e=this.mode?this.mode!=="production":process.env.NODE_ENV!=="production";return o(t,this.resourcePath,{root:r.root??process.cwd(),dev:e})}export{s as default};

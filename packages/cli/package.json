@@ -1,0 +1,42 @@
+{
+  "name": "skyloupe",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "SkyLoupe command line. Binary name: skyloupe.",
+  "bin": {
+    "skyloupe": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    }
+  },
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@skyloupe/core": "file:../core",
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1",
+    "vite": "^8.3.8",
+    "ws": "^8.18.0",
+    "zod": "^4.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "skyloupe",
+  "version": "0.2.0",
+  "description": "SkyLoupe CLI and libraries, built for install from GitHub.",
+  "license": "MIT",
+  "bin": {
+    "skyloupe": "packages/cli/dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git"
+  },
+  "dependencies": {
+    "@skyloupe/core": "file:packages/core",
+    "@skyloupe/react": "file:packages/react",
+    "@skyloupe/vite": "file:packages/vite",
+    "@skyloupe/devtools": "file:packages/devtools",
+    "@skyloupe/webpack": "file:packages/webpack",
+    "@skyloupe/next": "file:packages/next",
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1",
+    "vite": "^8.3.8",
+    "ws": "^8.18.0",
+    "zod": "^4.1.0"
+  }
+}

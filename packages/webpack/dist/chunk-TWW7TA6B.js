@@ -1,0 +1,2 @@
+import{relative as i}from"path";import{injectSourceAttributes as o,readSession as u,sessionModuleSource as a}from"@skyloupe/vite";function g(t,n,r){if(!r.dev)return t;let s=i(r.root,n).split("\\").join("/"),e=o(t,s.startsWith("..")?n:s)??t;return!/(^|\/)(layout|main)\.[jt]sx$/.test(s)&&!/(^|\/)(layout|main)\.[jt]sx$/.test(n)?e:l(e,a(u(r.root)))}function l(t,n){let r=t.match(/^\s*(['"])use client\1;?\s*/);return r?`${r[0]}
+${n}${t.slice(r[0].length)}`:`${n}${t}`}export{g as a,l as b};

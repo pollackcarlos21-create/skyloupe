@@ -1,0 +1,33 @@
+{
+  "name": "@skyloupe/next",
+  "version": "0.2.0",
+  "type": "module",
+  "sideEffects": false,
+  "description": "Next.js app-router helper. The loader runs in development only.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@skyloupe/webpack": "file:../webpack"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/next"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

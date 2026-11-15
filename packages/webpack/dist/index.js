@@ -1,0 +1,1 @@
+import{a as r,b as t}from"./chunk-TWW7TA6B.js";function p(e,o){return o.dev&&(e.module??={},e.module.rules??=[],e.module.rules.push({test:/\.[jt]sx$/,enforce:"pre",exclude:/node_modules/,use:[{loader:"@skyloupe/webpack/loader",options:{root:o.root}}]})),e}export{p as applySkyloupeWebpack,t as injectSession,r as transformModule};
