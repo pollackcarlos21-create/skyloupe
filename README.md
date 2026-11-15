@@ -1,5 +1,7 @@
 # SkyLoupe
 
+![SkyLoupe: Annotate. Tune. Ship with Codex.](docs/assets/skyloupe-poster-wide.png)
+
 Annotate a live React page, preview the tokens, and hand Codex a source location instead of a guessed selector.
 
 [中文说明](docs/zh-CN.md)
