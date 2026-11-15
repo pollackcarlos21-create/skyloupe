@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -73,7 +74,7 @@ export function stageDist(outDir, root = repoRoot) {
     const target = join(outDir, "packages", item.dir.split("/").pop());
     copyPackage(source, target);
     writeFileSync(join(target, "package.json"), `${JSON.stringify(workspaceDeps(pkg, pkg.version, "file"), null, 2)}\n`);
-    const packDir = join(outDir, ".pack", item.dir.split("/").pop());
+    const packDir = join(mkdtempSync(join(tmpdir(), "skyloupe-pack-")), item.dir.split("/").pop());
     copyPackage(source, packDir);
     writeFileSync(join(packDir, "package.json"), `${JSON.stringify(workspaceDeps(pkg, pkg.version, "url"), null, 2)}\n`);
     execFileSync("npm", ["pack", "--pack-destination", join(outDir, "packs")], { cwd: packDir, stdio: "inherit" });
