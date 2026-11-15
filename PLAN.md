@@ -799,14 +799,9 @@ Apply the following UI annotation captured from the live page (`http://localhost
 
 ## 11. 内置 Demo 设计与增长发布计划
 
-### 11.1 黄金 15 秒演示动图脚本（README 第一屏决定成败）
+### 11.1 内置 demo 画面
 
 内置 `demo/app` 设计为一个单屏深色/浅色双模 SaaS 仪表盘，左半边是两张定价卡片（绑定 `--card-padding`、`--card-radius`、`--card-accent` 和按钮文案语气下拉框），右半边是一张原生 `<canvas>` 绘制的四季度营收柱状图（每根柱子都是独立的虚拟对象，可单独选中并调节配色与圆角）。
-
-**15 秒录制脚本：**
-1. **0-4 秒**：在普通 Chrome 中点右下角 `Annotate`，鼠标扫过卡片和 `<canvas>` 柱状图，画布里的单根 `Q3 Revenue` 柱子精准高亮出独立边框与数据角标。
-2. **4-9 秒**：点击 `Pro` 定价卡片，弹出滑块面板，把圆角从 `8px` 拉到 `20px`、主色改成翡翠绿，按住 `Compare` 闪烁对比改前改后，输入一句 `"Make Pro stand out"`，点 **Send to Codex**。
-3. **9-15 秒**：右下角胶囊实时跳动 `Codex editing PricingCard.tsx... Done (5.2s)`，代码编辑器分屏里对应的 CSS 变量自动更新，页面热重载无缝接管！最后切一秒镜头展示同一个 `localhost:5173` 在 ChatGPT 桌面端内置浏览器里零改动直接唤醒官方原生控件。
 
 ### 11.2 发布与引起 OpenAI 关注的动作
 
@@ -814,7 +809,6 @@ Apply the following UI annotation captured from the live page (`http://localhost
 2. **给知名开源项目提轻量示范 PR 或写实战复盘**：参考 [Remotion PR #11944](https://github.com/remotion-dev/remotion/pull/11944) 和 [WordPress Playground PR #4412](https://github.com/WordPress/wordpress-playground/pull/4412) 的手写实现，写一篇短文《We audited OpenAI's new `document.oai.annotation` spec and built the missing React & Chrome DevTools kit》，展示手写 150 行易踩坑 DOM 代码如何缩减成 15 行声明式组件。
 3. **分发渠道**：
    - Hacker News（`Show HN: SkyLoupe – React kit, Chrome simulator, and Codex bridge for OpenAI Browser Annotations`）。
-   - X（Twitter）发布 15 秒实录视频，直接 @OpenAIDevs、Codex 客户端团队及负责前端/Apps SDK 的开发者关系成员。
    - 将 `skills/skyloupe/SKILL.md` 发布到 Skills 生态，让用户在 Codex 里说一句“给这个页面加上浏览器标注支持”就能自动引入 `@skyloupe/react`。
 
 ---

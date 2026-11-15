@@ -4,14 +4,6 @@
 
 [English](../README.md)
 
-## 15 秒演示
-
-![15 秒演示录像占位](assets/demo-placeholder.svg)
-
-1. **0–4 秒。** 在 Chrome 里点 **Annotate**，扫过定价卡片和营收图。**Q3 Revenue** 那根柱子单独出现边框。
-2. **4–9 秒。** 点 **Pro** 卡片，把圆角从 `8px` 拉到 `20px`，主色改成祖母绿，按住 **Hold to compare**，输入 `Make Pro stand out`，再点 **Send to Codex**。
-3. **9–15 秒。** 右下角胶囊显示 `Codex editing src/components/PricingCard.tsx... Done (5.2s)`，开发服务器热更新变量。同一个 `http://127.0.0.1:5173/` 放到 ChatGPT 桌面内置浏览器里，由原生控件接管。这一步只能在本机做，步骤写在 [m5-checklist.md](m5-checklist.md)。
-
 ```bash
 pnpm install
 pnpm --filter skyloupe build

@@ -21,4 +21,4 @@ Only the ChatGPT desktop app can show the native `document.oai.annotation` contr
 
 - npm publish
 - GitHub releases or tags
-- The Hacker News, X, and example-PR notes in PLAN.md section 11.2
+- The Hacker News and example-PR notes in PLAN.md section 11.2

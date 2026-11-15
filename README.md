@@ -6,14 +6,6 @@ Annotate a live React page, preview the tokens, and hand Codex a source location
 
 [中文说明](docs/zh-CN.md)
 
-## 15-second demo
-
-![15-second demo recording placeholder](docs/assets/demo-placeholder.svg)
-
-1. **0–4s.** In Chrome, press **Annotate**. Move across the pricing cards and the revenue chart. The **Q3 Revenue** bar gets its own outline.
-2. **4–9s.** Click the **Pro** card. Pull the radius from `8px` to `20px`, set the accent to emerald, hold **Hold to compare**, type `Make Pro stand out`, and press **Send to Codex**.
-3. **9–15s.** The capsule reads `Codex editing src/components/PricingCard.tsx... Done (5.2s)`. The dev server hot-reloads the token. The same `http://127.0.0.1:5173/` URL is what you open in the ChatGPT desktop browser, where the native controls take over. That last check is in [docs/m5-checklist.md](docs/m5-checklist.md).
-
 ```bash
 pnpm install
 pnpm --filter skyloupe build
