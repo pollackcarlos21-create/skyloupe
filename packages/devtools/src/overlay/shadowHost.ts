@@ -1,6 +1,6 @@
 import { bridgeLamp, listenBridge, probeBridge, readBrowserSession, sendAnnotation } from "../client/bridgeClient";
 import { buildAnnotationBundle, formatAnnotationMarkdown, withUnchangedChoices } from "../capture/bundleBuilder";
-import { renderEditor, type EditorSession } from "./editorPanel";
+import { ensureExtraControls, renderEditor, type EditorSession } from "./editorPanel";
 import { renderDrawer, scanDiagnostics } from "./diagnosticsDrawer";
 import { frameForPick, placeHighlight } from "./highlightLayer";
 import { pickAt, type AnnotationPick } from "../polyfill/picker";
@@ -166,7 +166,11 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
   document.addEventListener("oaiannotationcontrolchange", refreshHighlight);
   const observer = new MutationObserver(() => paint(false));
   observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["oai-annotatable", "oai-annotation-metadata"] });
-  paint(true);
+  paint(false);
+  void ensureExtraControls().then(() => {
+    rendered = undefined;
+    paint(true);
+  });
   const browserSession = mode === "polyfill-standalone" ? readBrowserSession() : null;
   if (browserSession) {
     void probeBridge(browserSession).then((connected) => {

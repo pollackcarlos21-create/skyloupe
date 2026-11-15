@@ -20,13 +20,9 @@ export interface VirtualObject {
   controlState?: Readonly<Record<string, string | number | boolean>>;
 }
 
-const CANVAS_LOCATE = Symbol.for("skyloupe.locateCanvasTarget");
-
-interface TargetSlot {
-  current: Record<string, string | number | boolean>;
-  original: Record<string, string | number | boolean>;
-  displayed: Record<string, string | number | boolean>;
-}
+const LOCATE = Symbol.for("skyloupe.locateCanvasTarget");
+type Value = string | number | boolean;
+type Slot = { current: Record<string, Value>; original: Record<string, Value>; displayed: Record<string, Value> };
 
 type HitTestFn = (args: {
   clientX: number;
@@ -55,73 +51,52 @@ export function AnnotatableCanvas({
   onControlChange?: (detail: AnnotationControlChangeDetail, object: VirtualObject | undefined) => void;
 }): ReactElement {
   const ref = useRef<HTMLCanvasElement>(null);
-  const objectsRef = useRef(virtualObjects);
-  const hitTestRef = useRef(hitTest);
-  const renderSelectionRef = useRef(renderSelection);
-  const onControlChangeRef = useRef(onControlChange);
-  const controlsRef = useRef(controls);
-  const headingRef = useRef(controlsHeading);
-  const modeRef = useRef(controlsMode);
-  objectsRef.current = virtualObjects;
-  hitTestRef.current = hitTest;
-  renderSelectionRef.current = renderSelection;
-  onControlChangeRef.current = onControlChange;
-  controlsRef.current = controls;
-  headingRef.current = controlsHeading;
-  modeRef.current = controlsMode;
+  const bag = useRef({ virtualObjects, hitTest, renderSelection, controls, controlsHeading, controlsMode, onControlChange });
+  bag.current = { virtualObjects, hitTest, renderSelection, controls, controlsHeading, controlsMode, onControlChange };
   const surfaceRef = useRef<SurfaceRegistrationHandle | undefined>(undefined);
   const registrationRef = useRef<ControlsRegistrationHandle | undefined>(undefined);
-  const targets = useRef(new Map<string, TargetSlot>());
+  const targets = useRef(new Map<string, Slot>());
   const selectedRef = useRef<string | null>(null);
   const publishRef = useRef<(id: string | null) => void>(() => undefined);
-  const controlsStamp = `${JSON.stringify(controls.map(toOfficialControl))}\n${controlsHeading ?? ""}\n${controlsMode ?? ""}`;
+  const stamp = `${controlsHeading ?? ""}\n${controlsMode ?? ""}\n${controls.map((control) => control.callback).join(",")}`;
 
   useLayoutEffect(() => {
     if (typeof document === "undefined") return;
     const view = { map: (rect: SurfaceRect) => rect };
     const safe = createSafeHitTest(ref, (args) => {
-      const custom = hitTestRef.current;
+      const custom = bag.current.hitTest;
       if (custom) {
-        return Promise.resolve(custom(args)).then((value) =>
-          value?.rect ? { ...value, rect: view.map(value.rect) } : value,
-        );
+        return Promise.resolve(custom(args)).then((value) => (value?.rect ? { ...value, rect: view.map(value.rect) } : value));
       }
-      const found = objectsRef.current.find((object) => contains(args.canvasX, args.canvasY, object.rect));
-      if (!found) return null;
-      return {
-        id: found.id,
-        name: found.name,
-        role: found.role,
-        metadata: found.metadata,
-        rect: view.map(found.rect),
-      };
+      const found = bag.current.virtualObjects.find((object) => contains(args.canvasX, args.canvasY, object.rect));
+      return found
+        ? { id: found.id, name: found.name, role: found.role, metadata: found.metadata, rect: view.map(found.rect) }
+        : null;
     });
     view.map = (rect) => safe.toViewportRect(rect);
-
     let listening = false;
     const syncTargets = () => {
-      for (const object of objectsRef.current) {
-        const existing = targets.current.get(object.id);
-        if (!existing) {
-          const seeded = seedTarget(object, controlsRef.current);
+      for (const object of bag.current.virtualObjects) {
+        const slot = targets.current.get(object.id);
+        if (!slot) {
+          const seeded = seed(object, bag.current.controls);
           targets.current.set(object.id, { current: seeded, original: { ...seeded }, displayed: { ...seeded } });
           continue;
         }
-        for (const control of controlsRef.current) {
-          if (control.callback in existing.current) continue;
-          const own = object.controlState?.[control.callback];
-          const value = own !== undefined ? own : fallbackValue(control);
-          existing.current[control.callback] = value;
-          existing.original[control.callback] = value;
-          existing.displayed[control.callback] = value;
+        for (const control of bag.current.controls) {
+          if (control.callback in slot.current) continue;
+          const value = object.controlState?.[control.callback] ?? fallback(control);
+          slot.current[control.callback] = value;
+          slot.original[control.callback] = value;
+          slot.displayed[control.callback] = value;
         }
       }
     };
     const officialFor = (id: string | null) => {
       syncTargets();
       const slot = id ? targets.current.get(id) : undefined;
-      return controlsRef.current.map((control) => {
-        const current = slot?.current[control.callback] ?? fallbackValue(control);
+      return bag.current.controls.map((control) => {
+        const current = slot?.current[control.callback] ?? fallback(control);
         const original = slot?.original[control.callback] ?? current;
         return toOfficialControl({ ...control, currentValue: current, defaultValue: original } as PreviewControl);
       });
@@ -131,21 +106,14 @@ export function AnnotatableCanvas({
       const api = document.oai?.annotation;
       if (!canvas || !api) return;
       const official = officialFor(id);
+      const heading = bag.current.controlsHeading;
+      const mode = bag.current.controlsMode;
       if (!registrationRef.current) {
-        if (official.length === 0) return;
-        registrationRef.current = api.registerControls({
-          targets: [canvas],
-          controls: official,
-          controlsHeading: headingRef.current,
-          controlsMode: modeRef.current,
-        });
+        if (!official.length) return;
+        registrationRef.current = api.registerControls({ targets: [canvas], controls: official, controlsHeading: heading, controlsMode: mode });
         return;
       }
-      registrationRef.current.update({
-        controls: official,
-        controlsHeading: headingRef.current,
-        controlsMode: modeRef.current,
-      });
+      registrationRef.current.update({ controls: official, controlsHeading: heading, controlsMode: mode });
     };
     publishRef.current = publish;
     const onChange = (event: Event) => {
@@ -155,71 +123,58 @@ export function AnnotatableCanvas({
       const slot = targetId ? targets.current.get(targetId) : undefined;
       let next = detail;
       if (slot) {
-        if (detail.action === "preview") {
-          slot.current[detail.callback] = detail.value;
-          slot.displayed[detail.callback] = detail.value;
-        } else {
+        if (detail.action === "preview") slot.current[detail.callback] = slot.displayed[detail.callback] = detail.value;
+        else {
           const original = slot.original[detail.callback];
           if (original !== undefined) next = { ...detail, value: original };
           slot.displayed[detail.callback] = next.value;
           if (detail.action === "reset") slot.current[detail.callback] = next.value;
         }
       }
-      onControlChangeRef.current?.(
-        next,
-        objectsRef.current.find((object) => object.id === targetId),
-      );
+      bag.current.onControlChange?.(next, bag.current.virtualObjects.find((object) => object.id === targetId));
     };
     const locate = (id: string) => {
       const canvas = ref.current;
-      const object = objectsRef.current.find((item) => item.id === id);
+      const object = bag.current.virtualObjects.find((item) => item.id === id);
       if (!canvas || !object) return null;
       syncTargets();
       const box = canvas.getBoundingClientRect();
       const scaleX = canvas.width ? box.width / canvas.width : 1;
       const scaleY = canvas.height ? box.height / canvas.height : 1;
       const slot = targets.current.get(id);
-      const radiusControl = controlsRef.current.find(
-        (control) => control.type === "range" && /radius/i.test(`${control.callback} ${control.label}`),
-      );
+      const radiusControl = bag.current.controls.find((control) => control.type === "range" && /radius/i.test(`${control.callback} ${control.label}`));
       const fromSlot = radiusControl ? slot?.displayed[radiusControl.callback] : undefined;
-      const radius = typeof fromSlot === "number" ? fromSlot : (object.radius ?? 0);
+      const radius = (typeof fromSlot === "number" ? fromSlot : (object.radius ?? 0)) * scaleX;
       return {
-        rect: {
-          x: box.left + object.rect.x * scaleX,
-          y: box.top + object.rect.y * scaleY,
-          width: object.rect.width * scaleX,
-          height: object.rect.height * scaleY,
-        },
-        radius: radius * scaleX,
+        rect: { x: box.left + object.rect.x * scaleX, y: box.top + object.rect.y * scaleY, width: object.rect.width * scaleX, height: object.rect.height * scaleY },
+        radius,
       };
     };
     const sync = () => {
       const canvas = ref.current;
       const api = document.oai?.annotation;
       if (!canvas || !api || surfaceRef.current) return;
-      (canvas as HTMLCanvasElement & { [CANVAS_LOCATE]?: typeof locate })[CANVAS_LOCATE] = locate;
+      (canvas as HTMLCanvasElement & { [LOCATE]?: typeof locate })[LOCATE] = locate;
       surfaceRef.current = api.registerSurface({
         element: canvas,
         hitTest: (args) => safe.hitTest(args),
         renderSelection: (args) => {
           selectedRef.current = args.selectedId;
           publish(args.selectedId);
-          renderSelectionRef.current?.(args);
+          bag.current.renderSelection?.(args);
         },
       });
       publish(selectedRef.current);
       canvas.addEventListener("oaiannotationcontrolchange", onChange);
       listening = true;
     };
-    const onReady = () => sync();
-    document.addEventListener("skyloupe:polyfill-ready", onReady);
+    document.addEventListener("skyloupe:polyfill-ready", sync);
     sync();
     return () => {
-      document.removeEventListener("skyloupe:polyfill-ready", onReady);
+      document.removeEventListener("skyloupe:polyfill-ready", sync);
       const canvas = ref.current;
       if (canvas && listening) canvas.removeEventListener("oaiannotationcontrolchange", onChange);
-      if (canvas) delete (canvas as HTMLCanvasElement & { [CANVAS_LOCATE]?: unknown })[CANVAS_LOCATE];
+      if (canvas) delete (canvas as HTMLCanvasElement & { [LOCATE]?: unknown })[LOCATE];
       publishRef.current = () => undefined;
       registrationRef.current?.dispose();
       registrationRef.current = undefined;
@@ -231,7 +186,7 @@ export function AnnotatableCanvas({
   useLayoutEffect(() => {
     if (typeof document === "undefined" || !surfaceRef.current) return;
     publishRef.current(selectedRef.current);
-  }, [controlsStamp, controlsHeading, controlsMode]);
+  }, [stamp]);
 
   useLayoutEffect(() => {
     surfaceRef.current?.invalidate();
@@ -244,7 +199,7 @@ function contains(x: number, y: number, rect: SurfaceRect): boolean {
   return x >= rect.x && y >= rect.y && x < rect.x + rect.width && y < rect.y + rect.height;
 }
 
-function fallbackValue(control: PreviewControl): string | number | boolean {
+function fallback(control: PreviewControl): Value {
   if (control.currentValue !== undefined) return control.currentValue;
   if (control.type === "range") return control.min;
   if (control.type === "color") return "#ffffff";
@@ -252,11 +207,8 @@ function fallbackValue(control: PreviewControl): string | number | boolean {
   return control.options[0]?.value ?? "";
 }
 
-function seedTarget(object: VirtualObject, controls: readonly PreviewControl[]): Record<string, string | number | boolean> {
-  const values: Record<string, string | number | boolean> = {};
-  for (const control of controls) {
-    const own = object.controlState?.[control.callback];
-    values[control.callback] = own !== undefined ? own : fallbackValue(control);
-  }
+function seed(object: VirtualObject, controls: readonly PreviewControl[]): Record<string, Value> {
+  const values: Record<string, Value> = {};
+  for (const control of controls) values[control.callback] = object.controlState?.[control.callback] ?? fallback(control);
   return values;
 }

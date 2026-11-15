@@ -4,24 +4,15 @@ import { recordControlChange, type ControlChangeRecord } from "../capture/bundle
 import type { AnnotationPick } from "../polyfill/picker";
 import { registrationFor, type RegistrationEntry } from "../polyfill/registry";
 
-interface BuiltIn {
-  type: "color" | "range";
-  label: string;
-  callback: string;
-  cssVar: string;
-  unit?: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  currentValue: string | number;
-}
+type EditorControl = AnnotationControlDefinition;
 
-const BUILT_INS: readonly BuiltIn[] = [
-  { type: "range", label: "Font size", callback: "skyloupeFontSize", cssVar: "font-size", unit: "px", min: 12, max: 32, step: 1, currentValue: 16 },
-  { type: "color", label: "Text color", callback: "skyloupeTextColor", cssVar: "color", currentValue: "#1c1917" },
-  { type: "color", label: "Background", callback: "skyloupeBackground", cssVar: "background-color", currentValue: "#ffffff" },
-  { type: "range", label: "Padding", callback: "skyloupePadding", cssVar: "padding", unit: "px", min: 0, max: 48, step: 1, currentValue: 0 },
-];
+let extraControls: AnnotationControlDefinition[] = [];
+
+export async function ensureExtraControls(): Promise<void> {
+  if (extraControls.length > 0) return;
+  const mod = await import("./extraControls");
+  extraControls = mod.builtIns();
+}
 
 export interface EditorSession {
   pick?: AnnotationPick;
@@ -93,7 +84,7 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
   compare.type = "button";
   compare.dataset.skyloupeRole = "compare";
   compare.textContent = "Hold to compare";
-  const liveValue = (control: AnnotationControlDefinition | BuiltIn): string | number | boolean | undefined => {
+  const liveValue = (control: EditorControl): string | number | boolean | undefined => {
     const input = panel.querySelector(`[data-callback="${control.callback}"]`);
     if (input instanceof HTMLInputElement && input.type === "checkbox") return input.checked;
     if (input instanceof HTMLInputElement && input.type === "range") return Number(input.value);
@@ -173,7 +164,7 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
 }
 
 function field(
-  control: AnnotationControlDefinition | BuiltIn,
+  control: EditorControl,
   target: Element | undefined,
   apply: (value: string | number | boolean) => void,
 ): HTMLElement {
@@ -222,32 +213,12 @@ function field(
   return label;
 }
 
-function controlsFor(entry: RegistrationEntry | undefined): Array<AnnotationControlDefinition | BuiltIn> {
-  if (!entry || entry.mode() === "extend") {
-    return [...(entry?.controls() ?? []), ...builtIns()];
-  }
+function controlsFor(entry: RegistrationEntry | undefined): EditorControl[] {
+  if (!entry || entry.mode() === "extend") return [...(entry?.controls() ?? []), ...extraControls];
   return [...entry.controls()];
 }
 
-function builtIns(): AnnotationControlDefinition[] {
-  return BUILT_INS.map((control) => {
-    if (control.type === "color") {
-      return { type: "color", label: control.label, callback: control.callback, reference: control.cssVar, currentValue: String(control.currentValue) };
-    }
-    return {
-      type: "range",
-      label: control.label,
-      callback: control.callback,
-      reference: control.cssVar,
-      min: control.min ?? 0,
-      max: control.max ?? 1,
-      step: control.step ?? 1,
-      currentValue: Number(control.currentValue),
-    };
-  });
-}
-
-function bindingFor(control: AnnotationControlDefinition | BuiltIn): PreviewBinding {
+function bindingFor(control: EditorControl): PreviewBinding {
   const reference = "reference" in control ? control.reference : undefined;
   const cssVar = reference?.startsWith("--") || reference === "font-size" || reference === "color" || reference === "background-color" || reference === "padding"
     ? reference

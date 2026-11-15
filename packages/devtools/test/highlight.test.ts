@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from "vitest";
 import type { AnnotationControlChangeDetail } from "@skyloupe/core";
 import { installPolyfill, resetDevtools } from "../src/polyfill/installPolyfill";
 import { elementFrame, placeHighlight } from "../src/overlay/highlightLayer";
-import { renderEditor } from "../src/overlay/editorPanel";
+import { ensureExtraControls, renderEditor } from "../src/overlay/editorPanel";
 import type { CanvasPick } from "../src/polyfill/picker";
 
 beforeEach(() => {
@@ -98,6 +98,17 @@ test("switching canvas targets shows that target's values and compare uses its o
   expect(events.map((event) => event.action)).toEqual(["preview-original", "preview-original"]);
   expect(events.map((event) => event.value)).toEqual(["#c2410c", 6]);
   expect(events.every((event) => event.virtualTarget?.targetId === "q1")).toBe(true);
+});
+
+test("built-in editor controls load from the dev-only chunk", async () => {
+  await ensureExtraControls();
+  installPolyfill();
+  const card = document.createElement("article");
+  document.body.append(card);
+  const panel = document.createElement("section");
+  renderEditor(panel, { pick: { kind: "element", element: card, box: { x: 0, y: 0, width: 10, height: 10 } }, changes: [], comment: "" }, () => undefined);
+  expect(value(panel, "skyloupeFontSize")).toBe("16");
+  expect(value(panel, "skyloupePadding")).toBe("0");
 });
 
 function value(panel: ParentNode, callback: string): string {
