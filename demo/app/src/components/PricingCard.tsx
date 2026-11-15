@@ -4,28 +4,40 @@ import { Annotatable, useAnnotationControls } from "@skyloupe/react";
 export const recordedRadius = 8;
 export const recordedAccent = "#2563eb";
 
-const tones = [
-  { label: "Start free trial", value: "trial" },
-  { label: "Talk to sales", value: "sales" },
-] as const;
-
 export function PricingCard({
   planId,
   price,
   featured,
+  features,
+  text,
 }: {
   planId: string;
   price: number;
   featured?: boolean;
+  features: readonly [string, string, string];
+  text: {
+    heading: string;
+    padding: string;
+    radius: string;
+    accent: string;
+    tone: string;
+    perMonth: string;
+    trial: string;
+    sales: string;
+  };
 }) {
   const ref = useRef<HTMLElement>(null);
-  const [tone, setTone] = useState<(typeof tones)[number]["value"]>("trial");
+  const [tone, setTone] = useState<"trial" | "sales">("trial");
+  const tones = [
+    { label: text.trial, value: "trial" },
+    { label: text.sales, value: "sales" },
+  ];
   useAnnotationControls(ref, {
-    controlsHeading: "Card appearance",
+    controlsHeading: text.heading,
     controls: [
       {
         type: "range",
-        label: "Card padding",
+        label: text.padding,
         callback: `set${planId}Padding`,
         reference: "--card-padding",
         cssVar: "--card-padding",
@@ -37,7 +49,7 @@ export function PricingCard({
       },
       {
         type: "range",
-        label: "Card radius",
+        label: text.radius,
         callback: `set${planId}Radius`,
         reference: "--card-radius",
         cssVar: "--card-radius",
@@ -49,7 +61,7 @@ export function PricingCard({
       },
       {
         type: "color",
-        label: "Accent color",
+        label: text.accent,
         callback: `set${planId}Accent`,
         reference: "--card-accent",
         cssVar: "--card-accent",
@@ -57,9 +69,9 @@ export function PricingCard({
       },
       {
         type: "select",
-        label: "Button tone",
+        label: text.tone,
         callback: `set${planId}Tone`,
-        options: [...tones],
+        options: tones,
         currentValue: tone,
         onApply: (value) => {
           if (value === "trial" || value === "sales") setTone(value);
@@ -67,21 +79,22 @@ export function PricingCard({
       },
     ],
   });
-  const label = tones.find((item) => item.value === tone)?.label ?? "Start free trial";
+  const label = tones.find((item) => item.value === tone)?.label ?? text.trial;
   return (
     <Annotatable
       as="article"
       ref={ref}
-      className={featured ? "card pro" : "card"}
+      className="card"
       name={`Pricing Card (${planId})`}
       metadata={{ planId, monthlyPrice: price }}
     >
-      <h2>{planId}</h2>
-      <p className="price"><strong>${price}</strong> / month</p>
+      <div className="title-row">
+        <h2>{planId}</h2>
+        {featured ? <span className="dot" /> : null}
+      </div>
+      <p className="price"><strong>${price}</strong> {text.perMonth}</p>
       <ul>
-        <li>{featured ? "Priority annotation review" : "Shared annotation inbox"}</li>
-        <li>{featured ? "Canvas object controls" : "DOM element controls"}</li>
-        <li>Local Codex bridge</li>
+        {features.map((feature) => <li key={feature}>{feature}</li>)}
       </ul>
       <button className="cta" type="button">{label}</button>
     </Annotatable>

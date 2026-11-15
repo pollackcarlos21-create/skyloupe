@@ -32,6 +32,7 @@
 - 2026-11-14: The demo plants exactly two spec issues: nested metadata on `Legacy note` inside a container (`OAI-META-001`) and `Launch badge` outside a container (`OAI-DOM-001`).
 - 2026-11-14: `runHitTest` runs a nested `runHitTest` from the hit-test callback instead of treating it as a second in-flight call, so `AnnotatableCanvas` can keep its coordinate wrapper while the devtools picker still owns the 250 ms slot.
 - 2026-11-14: `demo/`, `skills/skyloupe/SKILL.md`, and `docs/spec-compliance.md` landed in M5. npm publish, tags, and the section 11.2 posts stay with Ray.
+- 2026-11-15: The demo is white, sans-serif, and shadow-separated. A small EN / 中文 switch stores `skyloupe-demo-lang` in localStorage and defaults to English. The devtools chrome uses the same surfaces; its control labels stay English so the existing tests keep their names.
 - 2026-11-14: Each package has `tsconfig.json` and `tsup.config.ts`, which section 4.2 does not draw but tsup and `tsc` need.
 - 2026-11-14: `pnpm typecheck` and vitest resolve `@skyloupe/core` to TypeScript source; published `exports` point at `dist`.
 - 2026-11-14: Packages stay `private` at `0.0.0` until the v0.1 publish in M4.

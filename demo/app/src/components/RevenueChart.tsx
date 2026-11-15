@@ -10,13 +10,13 @@ const QUARTERS = [
   { id: "q4", name: "Q4 Revenue", value: 150, color: "#1d4ed8" },
 ] as const;
 
-function layout(): VirtualObject[] {
+function layout(names: readonly string[]): VirtualObject[] {
   const gap = 28;
   const barWidth = 64;
   const base = HEIGHT - 36;
   return QUARTERS.map((quarter, index) => ({
     id: quarter.id,
-    name: quarter.name,
+    name: names[index] ?? quarter.name,
     rect: {
       x: 48 + index * (barWidth + gap),
       y: base - quarter.value,
@@ -26,8 +26,18 @@ function layout(): VirtualObject[] {
   }));
 }
 
-export function RevenueChart() {
-  const objects = useMemo(() => layout(), []);
+export function RevenueChart({
+  names,
+  colorLabel,
+  radiusLabel,
+  heading,
+}: {
+  names: readonly string[];
+  colorLabel: string;
+  radiusLabel: string;
+  heading: string;
+}) {
+  const objects = useMemo(() => layout(names), [names]);
   const [style, setStyle] = useState<Record<string, { color: string; radius: number }>>(() =>
     Object.fromEntries(QUARTERS.map((quarter) => [quarter.id, { color: quarter.color, radius: 6 }])),
   );
@@ -37,19 +47,14 @@ export function RevenueChart() {
     const context = canvas.getContext("2d");
     if (!context) return;
     context.clearRect(0, 0, WIDTH, HEIGHT);
-    context.strokeStyle = "#d6c8b8";
-    context.beginPath();
-    context.moveTo(32, HEIGHT - 36);
-    context.lineTo(WIDTH - 16, HEIGHT - 36);
-    context.stroke();
     for (const object of objects) {
       const paint = style[object.id] ?? { color: "#0f766e", radius: 6 };
       context.fillStyle = paint.color;
       context.beginPath();
       context.roundRect(object.rect.x, object.rect.y, object.rect.width, object.rect.height, paint.radius);
       context.fill();
-      context.fillStyle = "#6f6256";
-      context.font = "12px ui-sans-serif, system-ui, sans-serif";
+      context.fillStyle = "#737373";
+      context.font = "12px Inter, ui-sans-serif, system-ui, sans-serif";
       context.fillText(object.name?.slice(0, 2) ?? "", object.rect.x + 18, HEIGHT - 16);
     }
   }, [objects, style]);
@@ -60,13 +65,13 @@ export function RevenueChart() {
       data-skyloupe-source="src/components/RevenueChart.tsx:48:6"
       width={WIDTH}
       height={HEIGHT}
-      controlsHeading="Quarter bar"
+      controlsHeading={heading}
       virtualObjects={objects}
       controls={[
-        { type: "color", label: "Bar color", callback: "setBarColor", currentValue: selected.color },
+        { type: "color", label: colorLabel, callback: "setBarColor", currentValue: selected.color },
         {
           type: "range",
-          label: "Bar radius",
+          label: radiusLabel,
           callback: "setBarRadius",
           min: 0,
           max: 16,

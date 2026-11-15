@@ -9,29 +9,36 @@ import type { DevtoolsMode } from "../polyfill/installPolyfill";
 
 const CSS = `
 :host { all: initial; }
-.shell { position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; color: #1c1917; }
+.shell { position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; font: 13px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif; color: #171717; }
 .banner, .capsule, .editor, .drawer { pointer-events: auto; }
-.banner { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1c1917; color: #fafaf9; padding: 6px 12px; border-radius: 999px; }
-.capsule { position: fixed; right: 16px; bottom: 16px; display: flex; gap: 6px; align-items: center; padding: 6px; background: #1c1917; color: #fafaf9; border-radius: 999px; box-shadow: 0 10px 30px rgba(28,25,23,.28); }
-.capsule button, .editor button { border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
-.annotate { background: #fafaf9; color: #1c1917; }
-.annotate[aria-pressed="true"] { background: #f59e0b; }
-.badge { background: #166534; color: white; }
-.badge[data-hot="true"] { background: #b91c1c; }
-.bridge { background: transparent; color: #a8a29e; }
-.bridge[data-connected="true"] { color: #86efac; }
-.editor, .drawer { position: fixed; background: #fffdf8; border: 1px solid #e7e5e4; border-radius: 14px; box-shadow: 0 16px 40px rgba(28,25,23,.18); }
-.editor { right: 16px; bottom: 72px; width: 280px; max-height: 70vh; overflow: auto; padding: 12px; display: grid; gap: 8px; }
-.editor h2 { margin: 0; font-size: 15px; }
-.editor .source, .drawer p { margin: 0; color: #57534e; }
-.editor label { display: grid; gap: 4px; font-size: 12px; }
-.editor input, .editor select, .editor textarea { width: 100%; font: inherit; }
-.editor textarea { min-height: 56px; }
+.banner, .capsule, .editor, .drawer, .editor button, .capsule button {
+  border: 0;
+  box-shadow:
+    0 1px 1px rgba(23, 23, 23, 0.04),
+    0 10px 24px rgba(23, 23, 23, 0.06),
+    0 24px 48px rgba(23, 23, 23, 0.05);
+}
+.banner { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #fff; color: #171717; padding: 8px 14px; border-radius: 999px; }
+.capsule { position: fixed; right: 20px; bottom: 20px; display: flex; gap: 8px; align-items: center; padding: 8px; background: #fff; color: #171717; border-radius: 999px; }
+.capsule button, .editor button { border-radius: 999px; padding: 7px 12px; font: inherit; cursor: pointer; background: #fff; color: #171717; }
+.annotate[aria-pressed="true"] { background: #171717; color: #fff; }
+.badge { background: #fff; color: #171717; }
+.badge[data-hot="true"] { color: #b91c1c; }
+.bridge { background: transparent; box-shadow: none; color: #737373; }
+.bridge[data-connected="true"] { color: #15803d; }
+.editor, .drawer { position: fixed; background: #fff; border-radius: 20px; }
+.editor { right: 20px; bottom: 84px; width: 280px; max-height: 70vh; overflow: auto; padding: 16px; display: grid; gap: 12px; }
+.editor h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.editor .source, .drawer p { margin: 0; color: #737373; }
+.editor label { display: grid; gap: 6px; font-size: 12px; color: #404040; }
+.editor input, .editor select, .editor textarea { width: 100%; font: inherit; border: 0; background: #fafafa; border-radius: 10px; }
+.editor textarea { min-height: 64px; padding: 8px; }
 .editor .row { display: flex; gap: 8px; }
-.drawer { left: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); max-height: 48vh; overflow: auto; padding: 12px; display: grid; gap: 8px; }
-.issue { border-left: 3px solid #b91c1c; padding: 6px 8px; background: #fef2f2; }
-.issue.warn { border-left-color: #d97706; background: #fffbeb; }
-.highlight { position: fixed; border: 2px solid #d97706; border-radius: 6px; box-shadow: 0 0 0 4px rgba(217,119,6,.18); pointer-events: none; }
+.drawer { left: 20px; bottom: 20px; width: min(360px, calc(100vw - 40px)); max-height: 48vh; overflow: auto; padding: 16px; display: grid; gap: 12px; }
+.issue, .issue.warn { display: grid; gap: 4px; padding: 4px 0 4px 16px; background: transparent; position: relative; }
+.issue::before, .issue.warn::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 999px; background: #b91c1c; }
+.issue.warn::before { background: #d97706; }
+.highlight { position: fixed; border: 0; border-radius: 10px; box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.45), 0 10px 28px rgba(15, 118, 110, 0.18); pointer-events: none; }
 `;
 
 export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">): void {
