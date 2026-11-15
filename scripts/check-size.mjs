@@ -28,14 +28,24 @@ function importsWithoutDom(file) {
   return result.status === 0;
 }
 
+function esbuildCommand() {
+  const candidates = [
+    join(root, "node_modules/.bin/esbuild"),
+    join(root, "packages/devtools/node_modules/.bin/esbuild"),
+  ];
+  const bin = candidates.find((file) => existsSync(file));
+  if (bin) return { command: bin, args: [] };
+  return { command: "pnpm", args: ["exec", "esbuild"] };
+}
+
 function productionBundleOmitsValidators(entry) {
   const outfile = join(root, "node_modules/.cache/skyloupe-size", entry.replaceAll("/", "_") + ".js");
   mkdirSync(dirname(outfile), { recursive: true });
+  const esbuild = esbuildCommand();
   const result = spawnSync(
-    "pnpm",
+    esbuild.command,
     [
-      "exec",
-      "esbuild",
+      ...esbuild.args,
       entry,
       "--bundle",
       "--format=esm",

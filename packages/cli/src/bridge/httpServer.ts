@@ -46,13 +46,26 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
   const clients = new Set<ServerResponse>();
   const server = createServer(async (request, response) => {
     const port = boundPort();
+    const origin = header(request, "origin");
+    if ((request.method ?? "GET") === "OPTIONS") {
+      const reflected = reflectedOrigin(origin, allowOrigins);
+      if (request.headers.host !== `127.0.0.1:${port}` || !reflected) {
+        response.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
+        response.end("Forbidden");
+        return;
+      }
+      response.writeHead(204, preflightHeaders(reflected));
+      response.end();
+      return;
+    }
     if (!authorized(request, port, token, allowOrigins)) {
       response.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
       response.end("Forbidden");
       return;
     }
+    const cors = corsHeaders(origin, allowOrigins);
     if (request.method === "GET" && request.url === "/health") {
-      response.writeHead(200, { "content-type": "application/json" });
+      response.writeHead(200, { "content-type": "application/json", ...cors });
       response.end(JSON.stringify({ ok: true }));
       return;
     }
@@ -61,6 +74,7 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
         "content-type": "text/event-stream",
         "cache-control": "no-cache",
         connection: "keep-alive",
+        ...cors,
       });
       response.write("\n");
       clients.add(response);
@@ -73,7 +87,7 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
       try {
         bundle = JSON.parse(body) as AnnotationBundle & { newThread?: boolean };
       } catch {
-        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.writeHead(400, { "content-type": "text/plain; charset=utf-8", ...cors });
         response.end("Bad Request");
         return;
       }
@@ -82,7 +96,7 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
       if (bundle.newThread) options.codex?.forgetThread();
       enqueue(options.repoRoot, { id, status: "pending", bundle, imagePath });
       log(annotationLine(bundle));
-      response.writeHead(202, { "content-type": "application/json" });
+      response.writeHead(202, { "content-type": "application/json", ...cors });
       response.end(JSON.stringify({ id }));
       if (options.codex) {
         const turn = await options.codex.submit(bundle, imagePath);
@@ -93,7 +107,7 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
       }
       return;
     }
-    response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    response.writeHead(404, { "content-type": "text/plain; charset=utf-8", ...cors });
     response.end("Not Found");
   });
 
@@ -116,6 +130,30 @@ export async function startBridge(options: BridgeOptions): Promise<BridgeHandle>
         for (const client of clients) client.end();
         server.close((error) => (error ? reject(error) : resolve()));
       }),
+  };
+}
+
+function reflectedOrigin(origin: string | undefined, allowOrigins: readonly string[]): string | undefined {
+  if (!origin || !originAllowed(origin, allowOrigins)) return undefined;
+  return origin;
+}
+
+function preflightHeaders(origin: string): Record<string, string> {
+  return {
+    "access-control-allow-origin": origin,
+    vary: "Origin",
+    "access-control-allow-methods": "GET, POST, OPTIONS",
+    "access-control-allow-headers": "content-type, x-skyloupe-token",
+    "access-control-max-age": "600",
+  };
+}
+
+function corsHeaders(origin: string | undefined, allowOrigins: readonly string[]): Record<string, string> {
+  const reflected = reflectedOrigin(origin, allowOrigins);
+  if (!reflected) return {};
+  return {
+    "access-control-allow-origin": reflected,
+    vary: "Origin",
   };
 }
 
