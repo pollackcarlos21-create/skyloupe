@@ -12,7 +12,7 @@
     "build": "pnpm -r --filter \"./packages/*\" build",
     "lint": "eslint .",
     "pretypecheck": "pnpm build",
-    "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./demo/*\" typecheck",
+    "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./demo/*\" --filter skyloupe-playground typecheck",
     "pretest": "pnpm build",
     "test": "vitest run",
     "check:size": "node scripts/check-size.mjs"

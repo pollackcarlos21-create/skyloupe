@@ -1,0 +1,9 @@
+{
+  "name": "@pollackcarlos21-create/vite",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "publish": {
+    "exclude": ["dist", "test", "tsup.config.ts"]
+  }
+}

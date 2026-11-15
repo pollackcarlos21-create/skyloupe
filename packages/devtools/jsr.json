@@ -1,0 +1,13 @@
+{
+  "name": "@pollackcarlos21-create/devtools",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "imports": {
+    "@skyloupe/core": "jsr:@pollackcarlos21-create/core@^0.2.0",
+    "@skyloupe/core/validators": "jsr:@pollackcarlos21-create/core@^0.2.0/validators"
+  },
+  "publish": {
+    "exclude": ["dist", "test", "tsup.config.ts"]
+  }
+}

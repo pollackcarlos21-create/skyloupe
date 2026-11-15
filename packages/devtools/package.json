@@ -1,7 +1,6 @@
 {
   "name": "@skyloupe/devtools",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.2.0",
   "type": "module",
   "sideEffects": false,
   "description": "Dev-only SkyLoupe polyfill and overlay. No Tailwind or CSS-in-JS runtime.",
@@ -21,10 +20,24 @@
   },
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit --pretty false"
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
     "playwright": "^1.65.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/devtools"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

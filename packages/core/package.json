@@ -1,7 +1,6 @@
 {
   "name": "@skyloupe/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.2.0",
   "type": "module",
   "sideEffects": false,
   "description": "Zero-dependency SkyLoupe core.",
@@ -17,9 +16,25 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit --pretty false"
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

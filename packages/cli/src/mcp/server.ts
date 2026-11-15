@@ -6,7 +6,7 @@ import { getAnnotation, listPending, resolveAnnotation } from "../bridge/store";
 export const mcpToolNames = ["list_pending_annotations", "get_annotation", "resolve_annotation"] as const;
 
 export function createMcpServer(repoRoot: string): McpServer {
-  const server = new McpServer({ name: "skyloupe", version: "0.0.0" });
+  const server = new McpServer({ name: "skyloupe", version: "0.2.0" });
   server.registerTool("list_pending_annotations", {
     description: "List pending SkyLoupe annotation summaries.",
   }, async () => ({

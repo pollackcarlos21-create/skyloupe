@@ -21,6 +21,6 @@ export default defineConfig({
     environmentOptions: {
       jsdom: { url: "http://localhost:3000/" },
     },
-    include: ["packages/*/test/**/*.test.ts", "packages/*/test/**/*.test.tsx"],
+    include: ["packages/*/test/**/*.test.ts", "packages/*/test/**/*.test.tsx", "playground/test/**/*.test.ts"],
   },
 });

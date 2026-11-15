@@ -6,6 +6,14 @@ Annotate a live React page, preview the tokens, and hand Codex a source location
 
 [中文说明](docs/zh-CN.md)
 
+Install the CLI from GitHub. npm is not required for the SkyLoupe packages themselves.
+
+```bash
+npm i github:pollackcarlos21-create/skyloupe#dist
+```
+
+Individual tarballs and the JSR steps are in [docs/RELEASING.md](docs/RELEASING.md).
+
 ```bash
 pnpm install
 pnpm --filter skyloupe build

@@ -1,7 +1,6 @@
 {
   "name": "@skyloupe/react",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.2.0",
   "type": "module",
   "sideEffects": false,
   "description": "React bindings for SkyLoupe. React is a peer dependency.",
@@ -18,7 +17,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit --pretty false"
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@skyloupe/core": "workspace:*"
@@ -31,5 +31,18 @@
     "@types/react-dom": "^19.3.0",
     "react": "^19.2.0",
     "react-dom": "^19.3.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

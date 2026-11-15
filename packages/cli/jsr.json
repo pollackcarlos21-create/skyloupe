@@ -1,0 +1,19 @@
+{
+  "name": "@pollackcarlos21-create/skyloupe",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./src/cli.ts",
+  "imports": {
+    "@skyloupe/core": "jsr:@pollackcarlos21-create/core@^0.2.0",
+    "@skyloupe/core/validators": "jsr:@pollackcarlos21-create/core@^0.2.0/validators",
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.25.0",
+    "commander": "npm:commander@^14.0.0",
+    "picocolors": "npm:picocolors@^1.1.1",
+    "vite": "npm:vite@^8.3.8",
+    "ws": "npm:ws@^8.18.0",
+    "zod": "npm:zod@^4.1.0"
+  },
+  "publish": {
+    "exclude": ["dist", "test", "tsup.config.ts"]
+  }
+}

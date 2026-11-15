@@ -1,7 +1,6 @@
 {
   "name": "@skyloupe/vite",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.2.0",
   "type": "module",
   "sideEffects": false,
   "description": "Vite plugin that stamps source locations during dev.",
@@ -18,12 +17,26 @@
   ],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit --pretty false"
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
     "vite": ">=5.0.0"
   },
   "devDependencies": {
     "vite": "^8.3.8"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/vite"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

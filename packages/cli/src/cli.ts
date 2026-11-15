@@ -6,7 +6,7 @@ import { runDoctor } from "./commands/doctor";
 import { initProject } from "./commands/init";
 import { runMcp } from "./commands/mcp";
 
-export const version = "0.0.0" as const;
+export const version = "0.2.0" as const;
 
 export async function main(
   argv: readonly string[],

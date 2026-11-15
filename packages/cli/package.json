@@ -1,7 +1,6 @@
 {
   "name": "skyloupe",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.2.0",
   "type": "module",
   "description": "SkyLoupe command line. Binary name: skyloupe.",
   "bin": {
@@ -15,10 +14,13 @@
   },
   "main": "./dist/cli.js",
   "types": "./dist/cli.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup && node --input-type=module -e \"import { chmodSync } from 'node:fs'; chmodSync('dist/cli.js', 0o755)\"",
-    "typecheck": "tsc --noEmit --pretty false"
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@skyloupe/core": "workspace:*",
@@ -28,5 +30,18 @@
     "vite": "^8.3.8",
     "ws": "^8.18.0",
     "zod": "^4.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/pollackcarlos21-create/skyloupe#readme",
+  "bugs": {
+    "url": "https://github.com/pollackcarlos21-create/skyloupe/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,6 +1,6 @@
 export { version as coreVersion } from "@skyloupe/core";
 
-export const version = "0.0.0" as const;
+export const version = "0.2.0" as const;
 
 export { AnnotationContainer } from "./AnnotationContainer";
 export { Annotatable } from "./Annotatable";

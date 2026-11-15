@@ -4,6 +4,14 @@
 
 [English](../README.md)
 
+从 GitHub 安装命令行。SkyLoupe 自己的包不依赖 npm 作为主要发布渠道。
+
+```bash
+npm i github:pollackcarlos21-create/skyloupe#dist
+```
+
+单个压缩包和 JSR 的步骤在 [RELEASING.md](RELEASING.md)。
+
 ```bash
 pnpm install
 pnpm --filter skyloupe build
