@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "baseUrl": ".",
+    "paths": {
+      "@skyloupe/webpack": ["../webpack/src/index.ts"],
+      "@skyloupe/vite": ["../vite/src/index.ts"]
+    }
+  },
+  "include": ["src", "test"]
+}

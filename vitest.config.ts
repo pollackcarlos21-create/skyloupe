@@ -14,6 +14,8 @@ export default defineConfig({
       "@skyloupe/react": source("react"),
       "@skyloupe/vite": source("vite"),
       "@skyloupe/devtools": source("devtools"),
+      "@skyloupe/webpack": source("webpack"),
+      "@skyloupe/next": source("next"),
     },
   },
   test: {

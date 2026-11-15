@@ -1,0 +1,38 @@
+{
+  "name": "@skyloupe/webpack",
+  "version": "0.2.0",
+  "type": "module",
+  "sideEffects": false,
+  "description": "Webpack loader and plugin that stamp source locations during development.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./loader": {
+      "types": "./dist/loader.d.ts",
+      "import": "./dist/loader.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit --pretty false",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@skyloupe/vite": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pollackcarlos21-create/skyloupe.git",
+    "directory": "packages/webpack"
+  },
+  "publishConfig": { "access": "public" }
+}

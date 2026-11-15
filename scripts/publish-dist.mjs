@@ -13,6 +13,8 @@ export const DIST_PACKAGES = [
   { dir: "packages/vite", name: "@skyloupe/vite" },
   { dir: "packages/devtools", name: "@skyloupe/devtools" },
   { dir: "packages/cli", name: "skyloupe" },
+  { dir: "packages/webpack", name: "@skyloupe/webpack" },
+  { dir: "packages/next", name: "@skyloupe/next" },
 ];
 
 export function packFileName(name, version) {

@@ -55,6 +55,6 @@ pnpm exec skyloupe demo
 pnpm exec skyloupe demo --offline
 ```
 
-`bridge` 只绑定 `127.0.0.1`，检查 `Host` 和 `Origin`，写请求必须带 `X-SkyLoupe-Token`。
+`init` 会识别 Vite、Next.js 或 webpack，以及包管理器，从 GitHub 压缩包安装对应的包，写入 `skyloupe:bridge`。Vite 的 `plugins` 是数组字面量时直接改配置，否则只打印 diff。`bridge` 只绑定 `127.0.0.1`，检查 `Host` 和 `Origin`，写请求必须带 `X-SkyLoupe-Token`。
 
 演示里故意留了两个规范问题，给诊断抽屉用：`Legacy note` 的嵌套 metadata（`OAI-META-001`），以及容器外的 `Launch badge`（`OAI-DOM-001`）。它们不是待修的缺陷。

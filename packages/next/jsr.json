@@ -1,0 +1,10 @@
+{
+  "name": "@pollackcarlos21-create/next",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "imports": {
+    "@skyloupe/webpack": "jsr:@pollackcarlos21-create/webpack@^0.2.0"
+  },
+  "publish": { "exclude": ["dist", "test", "fixtures", "tsup.config.ts"] }
+}

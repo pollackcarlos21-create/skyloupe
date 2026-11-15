@@ -23,6 +23,8 @@ npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/pac
 npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/packs/skyloupe-vite-0.2.0.tgz
 npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/packs/skyloupe-devtools-0.2.0.tgz
 npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/packs/skyloupe-0.2.0.tgz
+npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/packs/skyloupe-webpack-0.2.0.tgz
+npm i https://raw.githubusercontent.com/pollackcarlos21-create/skyloupe/dist/packs/skyloupe-next-0.2.0.tgz
 ```
 
 The library tarballs depend on the core tarball at that raw URL, not on the npm registry. Third-party packages such as `react` and `commander` still come from npm.
@@ -45,6 +47,8 @@ cd packages/core && npx jsr publish
 cd packages/react && npx jsr publish
 cd packages/vite && npx jsr publish
 cd packages/devtools && npx jsr publish
+cd packages/webpack && npx jsr publish
+cd packages/next && npx jsr publish
 cd packages/cli && npx jsr publish
 ```
 

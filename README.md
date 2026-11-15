@@ -57,7 +57,7 @@ pnpm exec skyloupe demo
 pnpm exec skyloupe demo --offline
 ```
 
-`bridge` listens on `127.0.0.1` only, checks `Host` and `Origin`, and requires the pairing token in `X-SkyLoupe-Token`.
+`init` detects Vite, Next.js, or webpack and the package manager, installs the matching packages from the GitHub tarballs, adds `skyloupe:bridge`, and patches a Vite config when its `plugins` array is a literal. Otherwise it prints the diff. `bridge` listens on `127.0.0.1` only, checks `Host` and `Origin`, and requires the pairing token in `X-SkyLoupe-Token`.
 
 ## Develop this repo
 
