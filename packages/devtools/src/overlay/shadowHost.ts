@@ -2,7 +2,7 @@ import { bridgeLamp, listenBridge, probeBridge, readBrowserSession, sendAnnotati
 import { buildAnnotationBundle, formatAnnotationMarkdown, withUnchangedChoices } from "../capture/bundleBuilder";
 import { renderEditor, type EditorSession } from "./editorPanel";
 import { renderDrawer, scanDiagnostics } from "./diagnosticsDrawer";
-import { placeHighlight } from "./highlightLayer";
+import { frameForPick, placeHighlight } from "./highlightLayer";
 import { pickAt, type AnnotationPick } from "../polyfill/picker";
 import { registrationFor } from "../polyfill/registry";
 import type { DevtoolsMode } from "../polyfill/installPolyfill";
@@ -27,6 +27,7 @@ const CSS = `
 .bridge { background: transparent; box-shadow: none; color: #737373; }
 .bridge[data-connected="true"] { color: #15803d; }
 .editor, .drawer { position: fixed; background: #fff; border-radius: 20px; }
+.banner[hidden], .highlight[hidden], .editor[hidden], .drawer[hidden] { display: none; }
 .editor { right: 20px; bottom: 84px; width: 280px; max-height: 70vh; overflow: auto; padding: 16px; display: grid; gap: 12px; }
 .editor h2 { margin: 0; font-size: 16px; font-weight: 600; }
 .editor .source, .drawer p { margin: 0; color: #737373; }
@@ -38,7 +39,7 @@ const CSS = `
 .issue, .issue.warn { display: grid; gap: 4px; padding: 4px 0 4px 16px; background: transparent; position: relative; }
 .issue::before, .issue.warn::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 999px; background: #b91c1c; }
 .issue.warn::before { background: #d97706; }
-.highlight { position: fixed; border: 0; border-radius: 10px; box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.45), 0 10px 28px rgba(15, 118, 110, 0.18); pointer-events: none; }
+.highlight { position: fixed; border: 0; border-radius: 0; box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.45), 0 10px 28px rgba(15, 118, 110, 0.18); pointer-events: none; }
 `;
 
 export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">): void {
@@ -93,6 +94,17 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
   const session: EditorSession = { changes: [], comment: "" };
   let space = false;
   let rendered: AnnotationPick | undefined;
+  let observed: Element | undefined;
+  const refreshHighlight = () => {
+    placeHighlight(highlight, session.pick ? frameForPick(session.pick) : undefined);
+  };
+  const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => refreshHighlight()) : undefined;
+  const watchSelection = (element: Element | undefined) => {
+    if (observed === element) return;
+    resizeObserver?.disconnect();
+    observed = element;
+    if (element) resizeObserver?.observe(element);
+  };
   const paint = (rebuild: boolean) => {
     const active = mode === "polyfill-standalone" && document.oai?.annotation?.isActive() === true;
     banner.hidden = !active;
@@ -105,8 +117,8 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
       rendered = session.pick;
       renderEditor(editor, session, () => paint(true));
     }
-    const box = session.pick && session.pick.kind !== "text-range" ? session.pick.box : session.pick?.box;
-    placeHighlight(highlight, session.pick ? box : undefined);
+    placeHighlight(highlight, session.pick ? frameForPick(session.pick) : undefined);
+    watchSelection(session.pick?.kind === "text-range" ? undefined : session.pick?.element);
   };
 
   annotate.addEventListener("click", () => {
@@ -149,6 +161,9 @@ export function mountOverlay(mode: Exclude<DevtoolsMode, "native-passthrough">):
     });
   }, true);
   document.addEventListener("oaiannotationmodechange", () => paint(false));
+  document.addEventListener("scroll", refreshHighlight, true);
+  window.addEventListener("resize", refreshHighlight);
+  document.addEventListener("oaiannotationcontrolchange", refreshHighlight);
   const observer = new MutationObserver(() => paint(false));
   observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["oai-annotatable", "oai-annotation-metadata"] });
   paint(true);

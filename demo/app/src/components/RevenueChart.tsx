@@ -37,9 +37,20 @@ export function RevenueChart({
   radiusLabel: string;
   heading: string;
 }) {
-  const objects = useMemo(() => layout(names), [names]);
   const [style, setStyle] = useState<Record<string, { color: string; radius: number }>>(() =>
     Object.fromEntries(QUARTERS.map((quarter) => [quarter.id, { color: quarter.color, radius: 6 }])),
+  );
+  const objects = useMemo(
+    () =>
+      layout(names).map((object) => {
+        const paint = style[object.id] ?? { color: "#0f766e", radius: 6 };
+        return {
+          ...object,
+          radius: paint.radius,
+          controlState: { setBarColor: paint.color, setBarRadius: paint.radius },
+        };
+      }),
+    [names, style],
   );
   useEffect(() => {
     const canvas = document.getElementById("chart");
@@ -58,7 +69,6 @@ export function RevenueChart({
       context.fillText(object.name?.slice(0, 2) ?? "", object.rect.x + 18, HEIGHT - 16);
     }
   }, [objects, style]);
-  const selected = style.q3 ?? { color: "#0f766e", radius: 6 };
   return (
     <AnnotatableCanvas
       id="chart"
@@ -68,7 +78,7 @@ export function RevenueChart({
       controlsHeading={heading}
       virtualObjects={objects}
       controls={[
-        { type: "color", label: colorLabel, callback: "setBarColor", currentValue: selected.color },
+        { type: "color", label: colorLabel, callback: "setBarColor", currentValue: "#0f766e" },
         {
           type: "range",
           label: radiusLabel,
@@ -76,7 +86,7 @@ export function RevenueChart({
           min: 0,
           max: 16,
           step: 1,
-          currentValue: selected.radius,
+          currentValue: 6,
         },
       ]}
       onControlChange={(detail, object) => {

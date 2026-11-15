@@ -29,6 +29,7 @@ export interface CanvasPick {
   metadata?: AnnotationMetadata;
   sourceLocation?: string;
   box?: SurfaceRect;
+  radius?: number;
 }
 
 export type AnnotationPick = ElementPick | TextPick | CanvasPick;

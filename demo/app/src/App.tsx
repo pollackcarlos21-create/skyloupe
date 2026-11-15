@@ -96,7 +96,7 @@ export function App() {
           {text.nested}
         </p>
       </div>
-      <span className="badge" oai-annotatable="Launch badge">{text.isolated}</span>
+      <span className="planted" oai-annotatable="Launch badge">{text.isolated}</span>
     </main>
   );
 }

@@ -343,6 +343,79 @@ test("AnnotatableCanvas hit-tests virtualObjects or a custom hitTest and routes 
   expect(seen).toEqual({ canvasX: 100, canvasY: 50 });
 });
 
+test("AnnotatableCanvas keeps each virtual object's controls keyed by targetId", async () => {
+  let surface: RegisterSurfaceConfig | undefined;
+  let handle: ReturnType<typeof registerControls> | undefined;
+  installApi((config) => {
+    handle = registerControls(config);
+    return handle;
+  });
+  document.oai!.annotation!.registerSurface = (config) => {
+    surface = config;
+    return registerSurface(config);
+  };
+  const applied: Array<{ id?: string; value: unknown; action: string }> = [];
+  const objects = [
+    {
+      id: "q1",
+      name: "Q1",
+      rect: { x: 0, y: 0, width: 10, height: 10 },
+      radius: 6,
+      controlState: { setBarColor: "#c2410c", setBarRadius: 6 },
+    },
+    {
+      id: "q3",
+      name: "Q3",
+      rect: { x: 40, y: 0, width: 10, height: 10 },
+      radius: 4,
+      controlState: { setBarColor: "#0f766e", setBarRadius: 4 },
+    },
+  ];
+  const view = await mount(
+    <AnnotatableCanvas
+      virtualObjects={objects}
+      controls={[
+        { type: "color", label: "Bar color", callback: "setBarColor", currentValue: "#000000" },
+        { type: "range", label: "Bar radius", callback: "setBarRadius", min: 0, max: 16, step: 1, currentValue: 0 },
+      ]}
+      onControlChange={(detail, object) => applied.push({ id: object?.id, value: detail.value, action: detail.action })}
+    />,
+  );
+  const canvas = view.host.querySelector("canvas");
+  expect(canvas).toBeTruthy();
+  expect(surface?.renderSelection).toBeTypeOf("function");
+  surface?.renderSelection?.({ hoveredId: "q3", selectedId: "q3" });
+  expect(readControls(handle!).controls.map((control) => control.currentValue)).toEqual(["#0f766e", 4]);
+  surface?.renderSelection?.({ hoveredId: "q1", selectedId: "q1" });
+  expect(readControls(handle!).controls.map((control) => control.currentValue)).toEqual(["#c2410c", 6]);
+  canvas!.dispatchEvent(
+    new CustomEvent("oaiannotationcontrolchange", {
+      detail: {
+        callback: "setBarColor",
+        value: "#111111",
+        action: "preview",
+        virtualTarget: { surfaceId: "chart", targetId: "q1" },
+      },
+    }),
+  );
+  surface?.renderSelection?.({ hoveredId: "q3", selectedId: "q3" });
+  expect(readControls(handle!).controls[0]?.currentValue).toBe("#0f766e");
+  surface?.renderSelection?.({ hoveredId: "q1", selectedId: "q1" });
+  expect(readControls(handle!).controls[0]?.currentValue).toBe("#111111");
+  canvas!.dispatchEvent(
+    new CustomEvent("oaiannotationcontrolchange", {
+      detail: {
+        callback: "setBarColor",
+        value: "#111111",
+        action: "preview-original",
+        virtualTarget: { surfaceId: "chart", targetId: "q1" },
+      },
+    }),
+  );
+  expect(applied.at(-1)).toEqual({ id: "q1", value: "#c2410c", action: "preview-original" });
+  await view.unmount();
+});
+
 test("react is a peer dependency and not a third-party runtime dependency", () => {
   const pkgPath = join(dirname(fileURLToPath(import.meta.url)), "../package.json");
   const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as {

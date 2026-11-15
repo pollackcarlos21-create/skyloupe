@@ -93,12 +93,32 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
   compare.type = "button";
   compare.dataset.skyloupeRole = "compare";
   compare.textContent = "Hold to compare";
+  const liveValue = (control: AnnotationControlDefinition | BuiltIn): string | number | boolean | undefined => {
+    const input = panel.querySelector(`[data-callback="${control.callback}"]`);
+    if (input instanceof HTMLInputElement && input.type === "checkbox") return input.checked;
+    if (input instanceof HTMLInputElement && input.type === "range") return Number(input.value);
+    if (input instanceof HTMLInputElement || input instanceof HTMLSelectElement) return input.value;
+    return control.currentValue;
+  };
+  const dispatchCanvas = (action: "preview" | "preview-original" | "reset") => {
+    if (pick.kind !== "canvas-object" || !target) return false;
+    for (const control of controls) {
+      const stored = "defaultValue" in control ? control.defaultValue : undefined;
+      const value = action === "preview" ? liveValue(control) : (stored ?? liveValue(control));
+      if (value === undefined) continue;
+      const detail = { ...detailFor(pick, control.callback, value), action };
+      target.dispatchEvent(new CustomEvent("oaiannotationcontrolchange", { detail, bubbles: true }));
+    }
+    return true;
+  };
   const release = () => {
+    if (dispatchCanvas("preview")) return;
     if (!last || !target) return;
     preview.apply({ ...last.detail, action: "preview" }, target, last.binding);
   };
   compare.addEventListener("pointerdown", (event) => {
     event.preventDefault();
+    if (dispatchCanvas("preview-original")) return;
     if (!last || !target) return;
     preview.apply({ ...last.detail, action: "preview-original" }, target, last.binding);
   });
@@ -134,12 +154,14 @@ export function renderEditor(panel: HTMLElement, session: EditorSession, onChang
   close.dataset.skyloupeRole = "close";
   close.textContent = "Close";
   close.addEventListener("click", () => {
-    if (last && target) preview.apply({ ...last.detail, action: "reset" }, target, last.binding);
-    if (target && last) {
-      target.dispatchEvent(new CustomEvent("oaiannotationcontrolchange", {
-        detail: { ...last.detail, action: "reset" },
-        bubbles: true,
-      }));
+    if (!dispatchCanvas("reset")) {
+      if (last && target) preview.apply({ ...last.detail, action: "reset" }, target, last.binding);
+      if (target && last) {
+        target.dispatchEvent(new CustomEvent("oaiannotationcontrolchange", {
+          detail: { ...last.detail, action: "reset" },
+          bubbles: true,
+        }));
+      }
     }
     session.pick = undefined;
     session.changes = [];
